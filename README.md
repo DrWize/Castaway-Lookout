@@ -7,6 +7,11 @@ Git history includes deckarep's work through merge commit `ba5ae61`; this Window
 branch extends that baseline with stability, diagnostics, display, and packaging
 work. Both upstream projects must retain clear attribution.
 
+> ☕ Enjoying Johnny Castaway 2026? If Johnny's island adventures bring back good
+> memories or make you smile, you can
+> [buy me a coffee](https://buymeacoffee.com/drwize). Your support helps me spend
+> more time maintaining and improving this project—thank you!
+
 ## At a glance
 
 | Area | Details |
