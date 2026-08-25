@@ -995,25 +995,20 @@ func resetEmbeddedResourcesForTest(t *testing.T) string {
 
 func TestEmbeddedArchiveHashesAndDecompression(t *testing.T) {
 	dataDirectory := resetEmbeddedResourcesForTest(t)
-	tests := []struct {
-		name string
-		data []byte
-		md5  string
-	}{
-		{name: "RESOURCE.MAP", data: resourceMapData, md5: canonicalMapMD5},
-		{name: "RESOURCE.001", data: resourceArchiveData, md5: canonicalArchiveMD5},
+	mapMD5 := fmt.Sprintf("%x", md5.Sum(resourceMapData))
+	archiveMD5 := fmt.Sprintf("%x", md5.Sum(resourceArchiveData))
+	profile, ok := resourceArchiveProfileForHashes(mapMD5, archiveMD5)
+	if !ok {
+		t.Fatalf("embedded data is not a supported matched pair: RESOURCE.MAP %s, RESOURCE.001 %s", mapMD5, archiveMD5)
 	}
-	for _, test := range tests {
-		t.Run(test.name, func(t *testing.T) {
-			got := fmt.Sprintf("%x", md5.Sum(test.data))
-			if got != test.md5 {
-				t.Fatalf("MD5 = %s, want verified archive %s", got, test.md5)
-			}
-		})
-	}
+	t.Logf("testing %s resource data", profile.name)
 
 	parseResourceFiles(filepath.Join(dataDirectory, "RESOURCE.MAP"))
-	if numAdsResources != 10 || numBmpResources != 117 || numPalResources != 1 || numScrResources != 10 || numTtmResources != 41 {
+	expectedBMPResources := 117
+	if profile.mapMD5 == archiveOrgMapMD5 {
+		expectedBMPResources = 116
+	}
+	if numAdsResources != 10 || numBmpResources != expectedBMPResources || numPalResources != 1 || numScrResources != 10 || numTtmResources != 41 {
 		t.Fatalf("parsed resource counts ADS=%d BMP=%d PAL=%d SCR=%d TTM=%d", numAdsResources, numBmpResources, numPalResources, numScrResources, numTtmResources)
 	}
 	for index := 0; index < numAdsResources; index++ {
