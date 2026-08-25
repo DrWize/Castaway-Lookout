@@ -12,9 +12,12 @@ resource_windows_*.syso
 /build/history/
 /build/screenshot*.png
 /build/scrantic/
+/build/installer/
+/build/installer-smoke/
 /scrantic/*
 !/scrantic/Johnny-Castaway-Original-Data.sfv
 /assets/RESOURCE.MAP
 /assets/RESOURCE.001
 /resources/*.wav
 /build/windows/johnny.ico
+/.tools/

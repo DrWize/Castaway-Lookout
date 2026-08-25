@@ -1,6 +1,20 @@
 # Johnny Castaway 2026 — Release and fidelity worklist
 
-Updated: 2026-07-18
+Updated: 2026-08-25
+
+## Windows 11 installer package
+
+- [x] Add a per-user Inno Setup package for the native x64 EXE and SCR without
+  copying files to System32 or requiring administrator rights.
+- [x] Add verified Internet Archive `scrantic-run.zip` download/local-import
+  support and keep its resource pair separate from the canonical hash profile.
+- [x] Add optional verified JCOS WAV installation and a Start Menu setup action
+  so the 23 sound effects can be downloaded later.
+- [x] Register the screensaver only after required data setup succeeds and
+  preserve the previous current-user screensaver for uninstall restoration.
+- [ ] User test: first install, app launch, sound playback, `/c`, `/s`, Windows
+  preview, idle activation, later sound installation, and uninstall.
+- [ ] Publish the installer only after the user has tested and approved it.
 
 ## Ordered work queue
 
@@ -20,12 +34,11 @@ unless it exposes a stability, data-safety, or fidelity regression.
    Review the final PR diff and artifact contents before merging into `main`.
    Do not include generated executables or original game data.
 
-3. [ ] **Create `v2026.1.0-rc.2` from the merged fidelity commit.**
-   RC1 points to `a1f395e` and does not include the current fidelity,
-   configuration, interface, or regression changes. Do not silently promote
-   the older RC1 artifacts.
+3. [ ] **Create `v2026.1.0-rc.3` with the Windows installer.**
+   Include the paired native binaries, per-user installer, shared INI,
+   verified data setup, and Castaway Lookout icon.
 
-4. [ ] **Test RC2 on a separate Windows account or machine.**
+4. [ ] **Test RC3 on a separate Windows account or machine.**
    Verify clean first launch with the default `scrantic` convention, explicit
    `--data-dir`, saved Data Files selection, native x64 startup, `/c`, `/s`, and
    Windows Screen Saver Settings preview/install behavior. Also verify missing
@@ -60,8 +73,8 @@ Implemented presentation and storage decisions:
   the embedded-description evidence in smaller text directly below it.
 - The 41-entry catalog is built into the application, not written to
   `JohnnyCastaway.ini`; the INI remains a compact persistent-settings file.
-- Settings displays the active `JohnnyCastaway.ini` path so portable and
-  LocalAppData fallback configurations are distinguishable.
+- Settings displays the one shared `JohnnyCastaway.ini` path used by the
+  application and screensaver.
 - Runtime loading, `--ttm`, logs, and diagnostics continue to use exact TTM
   filenames. PNG metadata records both `Content` and `Content Label`.
 
@@ -190,9 +203,8 @@ and display decisions remain in [`ROADMAP.md`](ROADMAP.md).
 - [x] Added `F12` PNG capture to `Pictures\Johnny Castaway` with embedded text
   metadata describing the active filter, sharpness, scaling, aspect, scene
   order, content, sky, holiday, window, resolution, and audio settings.
-- [x] Moved persistent preferences to a documented `JohnnyCastaway.ini` beside
-  the EXE or SCR, with legacy migration and a LocalAppData fallback for
-  protected installation directories.
+- [x] Moved persistent preferences to one installer-owned
+  `JohnnyCastaway.ini` shared by the co-located EXE and SCR.
 - [x] Added persistent scene order, scaling, CRT, window, audio, aspect,
   monitor, and data-directory settings with explicit command-line precedence.
 - [x] Added the `F10` Data Files manager with native folder browsing, canonical

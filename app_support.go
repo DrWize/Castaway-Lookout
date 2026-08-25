@@ -9,7 +9,7 @@ import (
 
 const (
 	appDirectoryName = "JohnnyCastaway"
-	appVersion       = "2026.1"
+	appVersion       = "2026.1.0-rc.3"
 	appLogName       = "JohnnyCastaway.log"
 	appLogMaxSize    = 1 << 20
 )

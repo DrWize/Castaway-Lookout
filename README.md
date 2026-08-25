@@ -7,6 +7,9 @@ Git history includes deckarep's work through merge commit `ba5ae61`; this Window
 branch extends that baseline with stability, diagnostics, display, and packaging
 work. Both upstream projects must retain clear attribution.
 
+Download current builds and read release notes on the
+[GitHub Releases page](https://github.com/DrWize/JohnnyCx64/releases).
+
 > ☕ Enjoying Johnny Castaway 2026? If Johnny's island adventures bring back good
 > memories or make you smile, you can
 > [buy me a coffee](https://buymeacoffee.com/drwize). Your support helps me spend
@@ -148,13 +151,12 @@ Log keeps its existing Space shortcut for pausing trace capture.
 ### Persistent settings
 
 Display, playback, audio, monitor, and data-folder choices persist in the
-human-readable `JohnnyCastaway.ini` beside the running `.exe` or `.scr`. The
-file is created automatically on first successful launch and can be edited
-while Johnny Castaway is closed. Existing LocalAppData `config.txt` and legacy
-home-folder settings migrate automatically. If the executable is installed in
-a protected directory such as `System32`, settings fall back to
-`LocalAppData\JohnnyCastaway\JohnnyCastaway.ini` so screensaver preferences can
-still be saved without administrator rights.
+single human-readable `JohnnyCastaway.ini` installed beside
+`JohnnyCastaway.exe` and `JohnnyCastaway.scr`. Both programs read and write that
+same file, so choices made in the application also configure the screensaver.
+The file can be edited while Johnny Castaway is closed. Installer upgrades
+preserve it, and uninstall removes it. Obsolete LocalAppData and home-folder
+settings are removed by the installer rather than imported.
 
 ### Menus and scene collections
 
@@ -176,8 +178,7 @@ All 41 collections, their ADS event usage, and all 616 embedded named
 subscenes are documented in the collapsible
 [TTM scene collection and subscene catalog](TTM_SCENES.md).
 
-Settings also shows the active `JohnnyCastaway.ini` path, including the
-LocalAppData fallback when the application directory is protected.
+Settings also shows the active shared `JohnnyCastaway.ini` path.
 Content changes retain the same application window and graphics context: the
 borderless fullscreen surface no longer closes, flashes the desktop, or repeats
 the startup fade when switching between Full Story and individual TTMs. Only

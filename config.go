@@ -36,23 +36,21 @@ type TConfig struct {
 }
 
 const (
-	CfgFileName          = "JohnnyCastaway.ini"
-	LegacyAppDataCfgName = "config.txt"
-	LegacyCfgName        = ".johnny_castaway_2026"
-	CurrentDayKey        = "currentDay="
-	DateKey              = "date="
-	CRTFilterKey         = "crtFilter="
-	CRTModeKey           = "crtMode="
-	SmoothingKey         = "smoothing="
-	ScalingModeKey       = "scalingMode="
-	SceneOrderKey        = "scenesInOrder="
-	WindowedKey          = "windowed="
-	MuteKey              = "mute="
-	StretchKey           = "stretch="
-	MonitorKey           = "monitor="
-	FastCRTSharpnessKey  = "fastCRTSharpness="
-	ShowPerformanceKey   = "showPerformance="
-	DataDirectoryKey     = "dataDirectory="
+	CfgFileName         = "JohnnyCastaway.ini"
+	CurrentDayKey       = "currentDay="
+	DateKey             = "date="
+	CRTFilterKey        = "crtFilter="
+	CRTModeKey          = "crtMode="
+	SmoothingKey        = "smoothing="
+	ScalingModeKey      = "scalingMode="
+	SceneOrderKey       = "scenesInOrder="
+	WindowedKey         = "windowed="
+	MuteKey             = "mute="
+	StretchKey          = "stretch="
+	MonitorKey          = "monitor="
+	FastCRTSharpnessKey = "fastCRTSharpness="
+	ShowPerformanceKey  = "showPerformance="
+	DataDirectoryKey    = "dataDirectory="
 )
 
 func cfgFullPath() string {
@@ -67,14 +65,6 @@ func configPathBesideExecutable(executable string) string {
 	return filepath.Join(filepath.Dir(executable), CfgFileName)
 }
 
-func cfgFallbackPath(name string) (string, error) {
-	configDir, err := appDataDir()
-	if err != nil {
-		return "", err
-	}
-	return filepath.Join(configDir, name), nil
-}
-
 func cfgFileWrite(cfg *TConfig) {
 	cfgLock.Lock()
 	defer cfgLock.Unlock()
@@ -83,24 +73,11 @@ func cfgFileWrite(cfg *TConfig) {
 
 func cfgFileWriteUnlocked(cfg *TConfig) {
 	data := cfgFormat(cfg)
-	portablePath := cfgFullPath()
-	if err := os.WriteFile(portablePath, []byte(data), 0644); err == nil {
-		cfgActivePath = portablePath
-		return
-	} else {
-		fmt.Fprintf(os.Stderr, "WARN: cannot write portable settings %s: %v\n", portablePath, err)
+	path := cfgFullPath()
+	if err := os.WriteFile(path, []byte(data), 0644); err != nil {
+		panic(fmt.Errorf("write shared settings %s: %w", path, err))
 	}
-	fallbackPath, fallbackErr := cfgFallbackPath(CfgFileName)
-	if fallbackErr == nil {
-		fallbackErr = os.MkdirAll(filepath.Dir(fallbackPath), 0755)
-	}
-	if fallbackErr == nil {
-		fallbackErr = os.WriteFile(fallbackPath, []byte(data), 0644)
-	}
-	if fallbackErr != nil {
-		panic(fmt.Errorf("write config beside executable or in LocalAppData: %w", fallbackErr))
-	}
-	cfgActivePath = fallbackPath
+	cfgActivePath = path
 }
 
 func cfgDisplayPath() string {
@@ -135,39 +112,15 @@ func cfgFileRead(cfg *TConfig) {
 	cfgLock.Lock()
 	defer cfgLock.Unlock()
 
-	portablePath := cfgFullPath()
-	type configCandidate struct {
-		path    string
-		migrate bool
-	}
-	candidates := []configCandidate{{path: portablePath}}
-	if fallbackPath, fallbackErr := cfgFallbackPath(CfgFileName); fallbackErr == nil {
-		candidates = append(candidates, configCandidate{path: fallbackPath})
-	}
-	if legacyPath, legacyErr := cfgFallbackPath(LegacyAppDataCfgName); legacyErr == nil {
-		candidates = append(candidates, configCandidate{path: legacyPath, migrate: true})
-	}
-	if home, homeErr := os.UserHomeDir(); homeErr == nil {
-		candidates = append(candidates, configCandidate{path: filepath.Join(home, LegacyCfgName), migrate: true})
-	}
-
-	var f *os.File
-	var err error
-	migrateLegacy := false
-	for _, candidate := range candidates {
-		f, err = os.Open(candidate.path)
-		if err == nil {
-			cfgActivePath = candidate.path
-			migrateLegacy = candidate.migrate
-			break
-		}
-		if !os.IsNotExist(err) {
-			fmt.Fprintf(os.Stderr, "WARN: failed to read settings %s: %v\n", candidate.path, err)
-		}
-	}
+	path := cfgFullPath()
+	f, err := os.Open(path)
 	if err != nil {
+		if !os.IsNotExist(err) {
+			fmt.Fprintf(os.Stderr, "WARN: failed to read shared settings %s: %v\n", path, err)
+		}
 		return
 	}
+	cfgActivePath = path
 
 	defer func() {
 		_ = f.Close()
@@ -183,9 +136,6 @@ func cfgFileRead(cfg *TConfig) {
 
 	if err := scanner.Err(); err != nil {
 		fmt.Fprintln(os.Stderr, "reading standard input:", err)
-	}
-	if migrateLegacy {
-		cfgFileWriteUnlocked(cfg)
 	}
 }
 
@@ -279,6 +229,12 @@ func defaultDataDirectory() string {
 	}
 	if workingErr != nil {
 		workingDirectory = ""
+	}
+	if directory, err := appDataDir(); err == nil {
+		managedDirectory := filepath.Join(directory, "scrantic")
+		if validateDataDirectory(managedDirectory) == nil {
+			return managedDirectory
+		}
 	}
 
 	return chooseDefaultDataDirectory(executablePath, workingDirectory, func(directory string) bool {

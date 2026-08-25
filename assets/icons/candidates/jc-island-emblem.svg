@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">JC Island Emblem</title>
+  <desc id="description">A bold JC monogram built from telescope, palm, island, and wave forms.</desc>
+  <rect x="25" y="25" width="462" height="462" rx="112" fill="#08304f"/>
+  <path d="M52 321c86-35 160-29 221 18 62 48 124 51 187 11v112H52z" fill="#0966bd"/>
+  <path d="M81 398c54-37 109-49 166-36 50 11 94 35 132 72-63 25-128 31-195 18-44-9-78-27-103-54z" fill="#f4d13d"/>
+  <path d="M73 449c88 23 177 17 267-18 47-18 86-40 116-66" fill="none" stroke="#35e0e5" stroke-width="13" stroke-linecap="round"/>
+  <path d="M104 151l153 0" fill="none" stroke="#ff6f61" stroke-width="28" stroke-linecap="round"/>
+  <path d="M233 151v153c0 61-30 91-89 91-42 0-69-19-82-58" fill="none" stroke="#35e0e5" stroke-width="43" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M434 187c-25-35-60-52-105-52-63 0-104 46-104 121s41 121 104 121c45 0 80-17 105-52" fill="none" stroke="#f4d13d" stroke-width="43" stroke-linecap="round"/>
+  <path d="M375 171c-8-57 3-99 34-126 0 42 12 74 36 96-2-39 17-69 56-89-20 42-23 77-8 106-31-12-64-8-98 13z" fill="#29b84a" stroke="#08304f" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M103 137l-30-23 40-11z" fill="#f4d13d"/>
+  <circle cx="103" cy="151" r="15" fill="#08304f"/>
+</svg>

@@ -38,7 +38,20 @@ var (
 const (
 	canonicalMapMD5     = "374e6d05c5e0acd88fb5af748948c899"
 	canonicalArchiveMD5 = "8bb6c99e9129806b5089a39d24228a36"
+	archiveOrgMapMD5    = "cf6b8e845a5235b2294fba0da1174f09"
+	archiveOrgDataMD5   = "e71fadd320497026861c3f4a2a3332a2"
 )
+
+type resourceArchiveProfile struct {
+	name       string
+	mapMD5     string
+	archiveMD5 string
+}
+
+var resourceArchiveProfiles = []resourceArchiveProfile{
+	{name: "canonical Sierra/Dynamix", mapMD5: canonicalMapMD5, archiveMD5: canonicalArchiveMD5},
+	{name: "Internet Archive OFG 1992", mapMD5: archiveOrgMapMD5, archiveMD5: archiveOrgDataMD5},
+}
 
 func loadResourceArchives(directory string) error {
 	mapData, archiveData, err := readVerifiedResourceArchives(directory)
@@ -67,13 +80,21 @@ func readVerifiedResourceArchives(directory string) ([]byte, []byte, error) {
 	if err != nil {
 		return nil, nil, fmt.Errorf("read RESOURCE.001 from %s: %w", directory, err)
 	}
-	if got := fmt.Sprintf("%x", md5.Sum(mapData)); got != canonicalMapMD5 {
-		return nil, nil, fmt.Errorf("RESOURCE.MAP MD5 is %s; expected %s", got, canonicalMapMD5)
-	}
-	if got := fmt.Sprintf("%x", md5.Sum(archiveData)); got != canonicalArchiveMD5 {
-		return nil, nil, fmt.Errorf("RESOURCE.001 MD5 is %s; expected %s", got, canonicalArchiveMD5)
+	mapMD5 := fmt.Sprintf("%x", md5.Sum(mapData))
+	archiveMD5 := fmt.Sprintf("%x", md5.Sum(archiveData))
+	if _, ok := resourceArchiveProfileForHashes(mapMD5, archiveMD5); !ok {
+		return nil, nil, fmt.Errorf("unsupported or mixed Johnny Castaway data files: RESOURCE.MAP MD5 %s, RESOURCE.001 MD5 %s", mapMD5, archiveMD5)
 	}
 	return mapData, archiveData, nil
+}
+
+func resourceArchiveProfileForHashes(mapMD5, archiveMD5 string) (resourceArchiveProfile, bool) {
+	for _, profile := range resourceArchiveProfiles {
+		if mapMD5 == profile.mapMD5 && archiveMD5 == profile.archiveMD5 {
+			return profile, true
+		}
+	}
+	return resourceArchiveProfile{}, false
 }
 
 type TMapFile struct {

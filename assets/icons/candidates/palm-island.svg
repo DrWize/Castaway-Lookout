@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title description">
+  <title id="title">Palm Island</title>
+  <desc id="description">A seated castaway rests beneath a curved palm on a bright island at sunset.</desc>
+  <defs>
+    <clipPath id="badge"><circle cx="256" cy="256" r="226"/></clipPath>
+  </defs>
+  <circle cx="256" cy="256" r="238" fill="#08304f"/>
+  <circle cx="256" cy="256" r="226" fill="#35e0e5"/>
+  <g clip-path="url(#badge)">
+    <circle cx="350" cy="212" r="86" fill="#ff6f61"/>
+    <path d="M16 288c94-32 181-23 260 26 70 43 146 45 228 5v181H16z" fill="#0966bd"/>
+    <path d="M57 370c60-48 128-67 205-55 63 9 119 37 168 83-43 31-101 46-173 44-89-2-156-26-200-72z" fill="#f4d13d"/>
+    <path d="M55 418c76 22 151 26 225 12 58-11 109-31 154-59" fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round"/>
+    <path d="M110 442c82 20 164 15 247-16" fill="none" stroke="#35e0e5" stroke-width="9" stroke-linecap="round"/>
+    <path d="M188 350c14-123 48-202 102-237" fill="none" stroke="#743b35" stroke-width="30" stroke-linecap="round"/>
+    <path d="M188 350c14-121 47-199 101-234" fill="none" stroke="#ff6f61" stroke-width="16" stroke-linecap="round"/>
+    <path d="M286 120c-54-44-107-47-158-10 54-12 95-3 123 27-50-13-94-2-132 34 58-16 108-13 149 10-25-42-24-81 2-117 4 37 16 65 37 85 10-48 41-82 91-102-34 41-48 79-42 114 31-27 69-36 113-27-45 15-78 40-99 76-21-42-49-72-84-90z" fill="#29b84a" stroke="#08304f" stroke-width="9" stroke-linejoin="round"/>
+    <circle cx="260" cy="309" r="25" fill="#08304f"/>
+    <path d="M239 329c31-10 58 3 76 40l-45 22-50-18z" fill="#08304f"/>
+    <path d="M272 386l62 8M242 372l-34 27" fill="none" stroke="#08304f" stroke-width="18" stroke-linecap="round"/>
+    <path d="M330 394h31M207 399l-21 14" fill="none" stroke="#ff6f61" stroke-width="12" stroke-linecap="round"/>
+    <path d="M279 334l51-25" fill="none" stroke="#08304f" stroke-width="12" stroke-linecap="round"/>
+  </g>
+</svg>

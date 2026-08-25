@@ -48,8 +48,8 @@ Exit criteria:
 ## Phase 2 — Publish the release (P0)
 
 - [ ] Merge the verified native x64 branch into `main`.
-- [ ] Publish `v2026.1.0-rc.2` with the paired native x64 EXE and SCR, required
-  user-supplied data policy, controls, known effects, and unsigned-binary notes.
+- [ ] Publish `v2026.1.0-rc.3` with the paired native x64 EXE and SCR, per-user
+  installer, required data policy, controls, and unsigned-binary notes.
 - [ ] Test the downloadable artifacts on a clean Windows 11 account or machine.
 - [ ] Promote the candidate to `v2026.1.0` if that smoke test passes.
 
@@ -116,6 +116,6 @@ targets and lower-powered hardware are documented in `docs/PERFORMANCE.md`.
 
 1. Commit the native Windows 11 x64 migration.
 2. Push the branch and require the Windows 11 x64 CI workflow to pass.
-3. Merge and publish `v2026.1.0-rc.2` with its paired EXE and SCR.
-4. Test RC2 on a genuinely separate Windows 11 account or machine.
+3. Merge and publish `v2026.1.0-rc.3` with its installer, EXE, and SCR.
+4. Test RC3 on a genuinely separate Windows 11 account or machine.
 5. Promote the verified candidate to stable, then update the portfolio.

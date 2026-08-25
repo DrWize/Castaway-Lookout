@@ -1065,6 +1065,18 @@ func TestValidateDataDirectory(t *testing.T) {
 	}
 }
 
+func TestResourceArchiveProfilesRejectMixedPairs(t *testing.T) {
+	for _, profile := range resourceArchiveProfiles {
+		matched, ok := resourceArchiveProfileForHashes(profile.mapMD5, profile.archiveMD5)
+		if !ok || matched.name != profile.name {
+			t.Fatalf("profile %q did not match its verified hashes", profile.name)
+		}
+	}
+	if _, ok := resourceArchiveProfileForHashes(canonicalMapMD5, archiveOrgDataMD5); ok {
+		t.Fatal("canonical map and Internet Archive data must not be accepted as a mixed pair")
+	}
+}
+
 func TestCompactMiddle(t *testing.T) {
 	if got := compactMiddle("E:\\ai\\Johnny\\scrantic", 80); got != "E:\\ai\\Johnny\\scrantic" {
 		t.Fatalf("short path changed to %q", got)
@@ -1181,11 +1193,78 @@ func TestPersistentSettingsConfigRoundTrip(t *testing.T) {
 	}
 }
 
-func TestPortableConfigPathIsBesideExecutable(t *testing.T) {
-	executable := filepath.Join("E:\\Games", "Johnny Castaway", "JohnnyCastaway.exe")
+func TestApplicationAndScreensaverShareInstalledConfigPath(t *testing.T) {
+	directory := filepath.Join("E:\\Games", "Johnny Castaway")
+	executable := filepath.Join(directory, "JohnnyCastaway.exe")
+	screensaver := filepath.Join(directory, "JohnnyCastaway.scr")
 	want := filepath.Join("E:\\Games", "Johnny Castaway", "JohnnyCastaway.ini")
 	if got := configPathBesideExecutable(executable); got != want {
-		t.Fatalf("portable config path = %q, want %q", got, want)
+		t.Fatalf("application config path = %q, want %q", got, want)
+	}
+	if got := configPathBesideExecutable(screensaver); got != want {
+		t.Fatalf("screensaver config path = %q, want %q", got, want)
+	}
+}
+
+func TestInstallerOwnsSingleSharedSettingsFile(t *testing.T) {
+	defaultSettings, err := os.ReadFile(filepath.Join("installer", CfgFileName))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var cfg TConfig
+	for _, line := range strings.Split(strings.TrimSpace(string(defaultSettings)), "\n") {
+		if err := cfgApplyLine(&cfg, line); err != nil {
+			t.Fatalf("default installer settings line %q: %v", line, err)
+		}
+	}
+	if cfg.DataDirectory != "" {
+		t.Fatalf("installer data directory = %q, want automatic managed-directory selection", cfg.DataDirectory)
+	}
+	if cfg.Monitor != 1 || cfg.FastCRTSharpness != 2 {
+		t.Fatalf("installer defaults = %#v, want monitor 1 and balanced Fast CRT sharpness", cfg)
+	}
+
+	installer, err := os.ReadFile(filepath.Join("installer", "JohnnyCastaway.iss"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	text := string(installer)
+	required := []string{
+		`Source: "JohnnyCastaway.ini"; DestDir: "{app}"; Flags: onlyifdoesntexist`,
+		`Type: files; Name: "{localappdata}\JohnnyCastaway\JohnnyCastaway.ini"`,
+		`Type: files; Name: "{localappdata}\JohnnyCastaway\config.txt"`,
+		`Type: files; Name: "{%USERPROFILE}\.johnny_castaway_2026"`,
+		`Type: files; Name: "{app}\JohnnyCastaway.ini"`,
+		`The application and screensaver share one JohnnyCastaway.ini file.`,
+	}
+	for _, entry := range required {
+		if !strings.Contains(text, entry) {
+			t.Errorf("installer is missing %q", entry)
+		}
+	}
+}
+
+func TestWindowsArtifactsUseCastawayLookoutIcon(t *testing.T) {
+	resourceLine := `1 ICON "../../assets/icons/candidates/castaway-lookout.ico"`
+	for _, path := range []string{
+		filepath.Join("build", "windows", "JohnnyCastaway.rc"),
+		filepath.Join("build", "windows", "JohnnyCastaway-screensaver.rc"),
+	} {
+		contents, err := os.ReadFile(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(string(contents), resourceLine) {
+			t.Errorf("%s does not embed Castaway Lookout", path)
+		}
+	}
+
+	installer, err := os.ReadFile(filepath.Join("installer", "JohnnyCastaway.iss"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !strings.Contains(string(installer), `SetupIconFile=..\assets\icons\candidates\castaway-lookout.ico`) {
+		t.Error("installer does not use Castaway Lookout")
 	}
 }
 
@@ -1208,6 +1287,9 @@ func TestMergePersistentAppOptions(t *testing.T) {
 	screensaver := mergePersistentAppOptions(appOptions{screenSaver: true, monitor: 1}, cfg, nil)
 	if screensaver.windowed {
 		t.Fatal("screensaver inherited persisted windowed mode")
+	}
+	if !screensaver.mute || !screensaver.stretch || screensaver.monitor != 3 {
+		t.Fatalf("screensaver did not inherit shared settings: %#v", screensaver)
 	}
 }
 

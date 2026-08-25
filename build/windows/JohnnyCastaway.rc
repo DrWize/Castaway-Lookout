@@ -1,10 +1,11 @@
 #include <windows.h>
 
+1 ICON "../../assets/icons/candidates/castaway-lookout.ico"
 1 RT_MANIFEST "JohnnyCastaway.manifest"
 
 1 VERSIONINFO
- FILEVERSION 1,0,0,0
- PRODUCTVERSION 2026,1,0,0
+ FILEVERSION 2026,1,0,3
+ PRODUCTVERSION 2026,1,0,3
  FILEFLAGSMASK 0x3fL
  FILEFLAGS 0x0L
  FILEOS VOS_NT_WINDOWS32
@@ -17,12 +18,12 @@ BEGIN
     BEGIN
       VALUE "CompanyName", "Johnny Castaway Community\0"
       VALUE "FileDescription", "Johnny Castaway 2026 for Windows\0"
-      VALUE "FileVersion", "1.0.0.0\0"
+      VALUE "FileVersion", "2026.1.0.3\0"
       VALUE "InternalName", "JohnnyCastaway\0"
       VALUE "LegalCopyright", "Engine contributors; original assets copyright their respective owners\0"
       VALUE "OriginalFilename", "JohnnyCastaway.exe\0"
       VALUE "ProductName", "Johnny Castaway 2026\0"
-      VALUE "ProductVersion", "2026.1\0"
+      VALUE "ProductVersion", "2026.1.0-rc.3\0"
     END
   END
   BLOCK "VarFileInfo"
