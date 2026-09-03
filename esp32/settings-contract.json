@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "layout": {
+    "values": ["left", "center", "right"],
+    "default": "right"
+  },
+  "clock": { "type": "boolean", "default": true },
+  "weather": { "type": "boolean", "default": true },
+  "crt": {
+    "values": ["off", "soft"],
+    "default": "soft"
+  },
+  "center_hides_sidebar_without_clearing_toggles": true
+}

@@ -427,6 +427,18 @@ without those visual effects. The separate fire-making sequence in
   The [upstream pull-request index](https://github.com/deckarep/Johnny-Castaway-2026-Public/pulls)
   provides additional development history; merged PR #1 is already included in
   this branch's ancestry.
+* [fbreve/Johnny-Castaway-Enhanced](https://github.com/fbreve/Johnny-Castaway-Enhanced)
+  — a related Go/Raylib fork reviewed at commit
+  [`ad676571eb1bba210a74aa205fe0a760fc13a672`](https://github.com/fbreve/Johnny-Castaway-Enhanced/commit/ad676571eb1bba210a74aa205fe0a760fc13a672)
+  for TTM timing, ADS thread ownership and completion chaining, saved artwork,
+  layer ordering, and island teardown behavior. It is supporting evidence, not
+  a canonical source: no automated Go tests or declared repository license were
+  found at that commit, and some behavior relies on incomplete saved-zone logic
+  or hard-coded scene exceptions. Do not copy or redistribute its source without
+  licensing clarity; see the detailed
+  [fidelity audit](docs/FIDELITY_AUDIT.md#johnny-castaway-enhanced-comparison).
+  ESP32 friendly scene names instead come from the separately audited
+  `johnny-castaway.com` catalog and canonical ADS identities.
 * [jno6809/jc_reborn](https://github.com/jno6809/jc_reborn) — C implementation
   on which this Go port is based.
 * [tallPete/JohnnyCastaway](https://github.com/tallPete/JohnnyCastaway) — native

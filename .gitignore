@@ -21,3 +21,13 @@ resource_windows_*.syso
 /resources/*.wav
 /build/windows/johnny.ico
 /.tools/
+/esp32/build*/
+/build-board-test/
+/esp32/managed_components/
+/esp32/dependencies.lock
+/esp32/sdkconfig
+/esp32/build-*.sdkconfig
+/esp32/**/__pycache__/
+/esp32/build.sdkconfig
+/esp32/artifacts/
+/tmp/

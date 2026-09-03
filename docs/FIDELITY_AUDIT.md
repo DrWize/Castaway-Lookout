@@ -1,6 +1,6 @@
 # Fidelity and implementation audit
 
-Updated: 2026-07-17
+Updated: 2026-09-01
 
 This audit compares observable behavior and defensive implementation choices. It
 does not copy or redistribute game data, artwork, recordings, or source from the
@@ -31,6 +31,43 @@ Primary references:
 | Intro resource failure | Missing `INTRO.SCR` terminates through the explicit `scr resource: INTRO.SCR not found` path. | Added a focused failure-injection regression test. |
 | Settings persistence | Config parsing, CLI precedence, and screensaver isolation have regression coverage. | Confirmed for the Windows process model. |
 | Multi-monitor audio | The Windows port runs one selected-monitor instance under a single-instance lock, unlike the macOS per-display host model. | Duplicate per-monitor audio is not applicable; true simultaneous multi-monitor playback is not supported. |
+
+## Johnny Castaway Enhanced comparison
+
+[`fbreve/Johnny-Castaway-Enhanced`](https://github.com/fbreve/Johnny-Castaway-Enhanced)
+was inspected at commit
+[`ad676571eb1bba210a74aa205fe0a760fc13a672`](https://github.com/fbreve/Johnny-Castaway-Enhanced/commit/ad676571eb1bba210a74aa205fe0a760fc13a672).
+It is useful supporting evidence for the ESP32 fidelity work, but it is not a
+canonical behavior source. Final resource and playback semantics must still be
+verified against the desktop decoder, deterministic fixtures, QEMU, and the
+physical panel.
+
+The transferable findings are:
+
+- `TIMER 0x2022` selects a uniform random duration from its inclusive minimum
+  and maximum rather than their fixed average;
+- TTM `0x1101`/`0x1111` transitions require separate original/root and current
+  tags so ADS stop, repeat, running, and completion ownership remain stable;
+- local and global `IF_LASTPLAYED` completion chains are part of full ADS event
+  playback;
+- clip zones and the pixel, rectangle, circle, save-zone, and restore-zone
+  commands need complete renderer integration;
+- persistent artwork needs saved-zone composition that survives background and
+  wave updates;
+- plane/tree and WALKSTUF/WOULDBE scenes need explicit identity- and
+  direction-aware layer ordering rather than transient thread-index ordering;
+- non-island transitions must tear down island, cloud, wave, holiday, and
+  retained-layer state cleanly.
+
+Limitations matter: no automated Go tests or declared repository license were
+found at the inspected commit, saved-zone restore behavior remains incomplete,
+and several fixes use hard-coded scene exceptions. Do not copy, port, or
+redistribute source from this repository without explicit licensing clarity;
+use its behavior only to form independently validated regression cases.
+
+The ESP32 friendly scene names are separate work. They are generated from the
+audited `johnny-castaway.com` catalog and canonical ADS identities, not from
+Johnny Castaway Enhanced.
 
 ## xBaK parser comparison
 

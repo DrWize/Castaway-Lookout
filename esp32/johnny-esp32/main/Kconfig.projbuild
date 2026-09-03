@@ -1,0 +1,42 @@
+menu "Johnny Castaway milestone"
+
+config JOHNNY_QEMU
+    bool "Use the ESP32-S3 QEMU virtual RGB panel"
+    default n
+    help
+        Replace only the Waveshare panel, CH422G, I2C and GT911 board access
+        with Espressif's virtual RGB panel. Resource decoding and rendering
+        remain unchanged.
+
+config JOHNNY_QEMU_HEADLESS
+    bool "Skip virtual LCD refresh waits in headless QEMU"
+    depends on JOHNNY_QEMU
+    default n
+    help
+        Keep framebuffer rendering active but do not notify the QEMU display
+        device when no display frontend exists. The QEMU LCD component waits
+        indefinitely for an absent frontend in -nographic runs.
+
+config JOHNNY_BOARD_TEST
+    bool "Show color bars and touch cursor only"
+    default n
+    help
+        Skip Sierra data validation and INTRO.SCR decoding.
+
+config JOHNNY_REVIEW_ONLY
+    bool "Play only scenes saved as REVIEW"
+    default n
+    help
+        Filter the active scene list to identities stored in the persistent
+        REVIEW mask. OK removes the current identity; REVIEW retains it.
+        Keep this disabled for the immutable 63-scene classification build.
+
+config JC_SCENE_NAMES
+    bool "Include curated Johnny scene names"
+    default y
+    help
+        Include the offline generated ADS/tag friendly-title and future menu
+        metadata curated from johnny-castaway.com and canonical resource data.
+        Disable only when measuring the small flash cost of the name table.
+
+endmenu

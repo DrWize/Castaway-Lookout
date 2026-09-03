@@ -1,0 +1,82 @@
+entry_id,category,event_name,display_title,source_url,source_fragment,mapped_ads,mapped_ttm,mapping_status,notes
+SOURCE_LIST,Source inventory,Johnny Castaway Index,,https://johnny-castaway.com/list.html,,,,reference,Last updated 18 July 2007
+SOURCE_SPECIAL_DAYS,Calendar rules,Johnny Castaway Special Days,,https://johnny-castaway.com/annivers.html,,,,reference,Last updated 29 January 2004; calendar overlays not scenes
+SOURCE_BUGS,Known bugs,Johnny Castaway Bugs,,https://johnny-castaway.com/bugs.html,,,,reference,Last updated 24 June 2009; reference only
+SOURCE_COMMON,Playable scenes,Johnny Castaway Common Activities,,https://johnny-castaway.com/common.html,,,,reference,Last updated 16 December 2005
+SOURCE_FISHING,Playable scenes,Johnny Castaway Fishing,,https://johnny-castaway.com/fishing.html,,,,reference,Last updated 06 August 2003
+SOURCE_LEAVING,Playable scenes,Johnny Castaway Escapes,,https://johnny-castaway.com/leaving.html,,,,reference,Last updated 18 July 2007
+SOURCE_MERMAID,Playable scenes,Johnny Meets a Mermaid,,https://johnny-castaway.com/mermaid.html,,,,reference,Last updated 04 September 2008
+SOURCE_PIRATES,Playable scenes,Johnny Castaway and the Pirates,,https://johnny-castaway.com/pirates.html,,,,reference,Last updated 28 July 2003
+SOURCE_READING,Playable scenes,Johnny Castaway Reading,,https://johnny-castaway.com/reading.html,,,,reference,Last updated 10 February 2001
+SOURCE_SEAGULL,Playable scenes,Johnny Castaway and the Seagull,,https://johnny-castaway.com/seagull.html,,,,reference,Last updated 14 August 2003
+SOURCE_STORY,Story-day information,The Story of Johnny Castaway,,https://johnny-castaway.com/story.html,,,,reference,Last updated 17 October 2007
+SOURCE_SWIMMING,Playable scenes,Johnny Castaway Swimming and Washing,,https://johnny-castaway.com/swimming.html,,,,reference,Last updated 10 February 2001
+SOURCE_UNUSUAL,Playable scenes,Johnny Castaway Rare and Unusual,,https://johnny-castaway.com/unusual.html,,,,reference,Last updated 02 August 2008
+SOURCE_VISITORS,Playable scenes,Johnny Castaway Visitors,,https://johnny-castaway.com/visitors.html,,,,reference,Last updated 29 May 2006
+SCENE_01,Swimming,Diving gags,DIVING GAGS,https://johnny-castaway.com/swimming.html,dive,ACTIVITY.ADS#1,,primary,Canonical ADS description GAG DIVES
+SCENE_02,Seagull,Seagull sits while Johnny reads,SEAGULL SITS READING,https://johnny-castaway.com/seagull.html,head,ACTIVITY.ADS#12,,primary,Canonical ADS description GULL 3 STILL READING
+SCENE_03,Seagull,Seagull steals clothes while bathing,SEAGULL STEALS CLOTHES,https://johnny-castaway.com/seagull.html,shorts,ACTIVITY.ADS#11,,primary,Canonical ADS description GULL 2 BATHING
+SCENE_04,Seagull,Seagull steals the book,SEAGULL STEALS BOOK,https://johnny-castaway.com/seagull.html,book,ACTIVITY.ADS#10,,primary,Canonical ADS description GULL 1 READING
+SCENE_05,Swimming,Normal dive from the palm tree,PALM TREE DIVE,https://johnny-castaway.com/swimming.html,dive,ACTIVITY.ADS#4,,primary,Canonical ADS description MUNDANE DIVE
+SCENE_06,Rare and Unusual,Rain dance,RAIN DANCE,https://johnny-castaway.com/unusual.html,rain,ACTIVITY.ADS#5,,primary,Canonical ADS description NATIVE 1
+SCENE_07,Reading,Reading gag,READING GAG,https://johnny-castaway.com/reading.html,,ACTIVITY.ADS#6,,primary,Canonical ADS description GAG JOHN READ
+SCENE_08,Reading,Johnny reads a book,READING A BOOK,https://johnny-castaway.com/reading.html,,ACTIVITY.ADS#7,,primary,Canonical ADS description MUNDANE JOHN READ
+SCENE_09,Swimming,Johnny bathes in the sea,OCEAN BATH,https://johnny-castaway.com/swimming.html,wash,ACTIVITY.ADS#8,,primary,Canonical ADS description JOHN BATH
+SCENE_10,Visitors,Visitors photograph native Johnny,NATIVE BOAT VISIT,https://johnny-castaway.com/visitors.html,nude,ACTIVITY.ADS#9,,primary,Canonical ADS description NATIVE 3
+SCENE_11,Common,Johnny builds a sandcastle,BUILD SANDCASTLE,https://johnny-castaway.com/common.html,castle,BUILDING.ADS#1,,primary,Canonical ADS description MJSAND
+SCENE_12,Pirates,Pirates tie Johnny down,PIRATES TIE JOHNNY,https://johnny-castaway.com/pirates.html,tieup,BUILDING.ADS#4,,primary,Canonical ADS description LILIPUT 1
+SCENE_13,Common,Johnny sleeps,SLEEPING,https://johnny-castaway.com/common.html,sleeping,BUILDING.ADS#3,,primary,Canonical ADS description MUNDANE SLEEP
+SCENE_14,Pirates,Lilliputians arrive by boat,LILLIPUTIAN BOAT,https://johnny-castaway.com/pirates.html,,BUILDING.ADS#2,,primary,Canonical ADS description LILIPUT 2
+SCENE_15,Common,Johnny builds a campfire,BUILD CAMPFIRE,https://johnny-castaway.com/common.html,fire,BUILDING.ADS#5,,primary,Canonical ADS description JOHN BUILDS FIRE
+SCENE_16,Common,Johnny cooks and eats,COOK AND EAT,https://johnny-castaway.com/common.html,fish,BUILDING.ADS#7,,primary,Canonical ADS description EAT
+SCENE_17,Pirates,Lilliputians at night,NIGHT LILLIPUTIANS,https://johnny-castaway.com/pirates.html,,BUILDING.ADS#6,,primary,Canonical ADS description LILIPUT 3 NIGHT
+SCENE_18,Fishing,Johnny fishes for junk,FISHING FOR JUNK,https://johnny-castaway.com/fishing.html,,FISHING.ADS#1,,primary,Canonical ADS description FISH AT A JUNK
+SCENE_19,Fishing,Johnny fishes for keepers,FISHING KEEPERS,https://johnny-castaway.com/fishing.html,,FISHING.ADS#2,,primary,Canonical ADS description FISH AT A KEEPERS
+SCENE_20,Fishing,Johnny catches a large octopus,LARGE OCTOPUS,https://johnny-castaway.com/fishing.html,,FISHING.ADS#3,,primary,Canonical ADS description EIGHT ARM MENACE
+SCENE_21,Fishing,Fishing catch variation one,FISHING CATCH ONE,https://johnny-castaway.com/fishing.html,,FISHING.ADS#4,,technical,Canonical ADS description CATCH 1; exact website catch is ambiguous
+SCENE_22,Fishing,Green fish squirts Johnny,SQUIRTING GREEN FISH,https://johnny-castaway.com/fishing.html,,FISHING.ADS#5,,primary,Canonical ADS description FISH EATS FOUL FOOD
+SCENE_23,Fishing,Fishing catch variation three,FISHING CATCH THREE,https://johnny-castaway.com/fishing.html,,FISHING.ADS#6,,technical,Canonical ADS description CATCH 3; exact website catch is ambiguous
+SCENE_24,Fishing,Shore fishing for junk,SHORE FISHING JUNK,https://johnny-castaway.com/fishing.html,,FISHING.ADS#7,,technical,Canonical ADS description FISH AT C FOR JUNK
+SCENE_25,Fishing,Shore fishing for keepers,SHORE FISH KEEPERS,https://johnny-castaway.com/fishing.html,,FISHING.ADS#8,,technical,Canonical ADS description FISH AT KEEPERS
+SCENE_26,Story,Johnny returns to the island,BACK ON THE ISLAND,https://johnny-castaway.com/story.html,scenes,JOHNNY.ADS#1,,primary,Canonical ADS description THE END; story day 11
+SCENE_27,Story,Johnnys first message,FIRST MESSAGE,https://johnny-castaway.com/story.html,scenes,JOHNNY.ADS#2,,primary,Canonical ADS description JOHNS 1ST MESSAGE; story day 2
+SCENE_28,Story,Johnnys final message,FINAL MESSAGE,https://johnny-castaway.com/story.html,scenes,JOHNNY.ADS#3,,primary,Canonical ADS description JOHN FINAL MESSAGE; story day 6
+SCENE_29,Common,Johnny finds a message bottle,FIND MESSAGE BOTTLE,https://johnny-castaway.com/common.html,bottle,JOHNNY.ADS#4,,primary,Canonical ADS description BOTTLE FIND
+SCENE_30,Common,Johnny throws a message bottle,THROW MESSAGE BOTTLE,https://johnny-castaway.com/common.html,bottle,JOHNNY.ADS#5,,primary,Canonical ADS description BOTTLE THROW
+SCENE_31,Story,Johnny dreams at work,DREAMING AT WORK,https://johnny-castaway.com/story.html,scenes,JOHNNY.ADS#6,,primary,Canonical ADS description JOHN AT WORK; story day 10
+SCENE_32,Mermaid,Johnny and Mary have dinner,DINNER WITH MERMAID,https://johnny-castaway.com/mermaid.html,dinner,MARY.ADS#1,,primary,Canonical ADS description THE DATE; story day 5
+SCENE_33,Mermaid,Johnny asks Mary for a date,ASK MERMAID ON DATE,https://johnny-castaway.com/mermaid.html,merarrive,MARY.ADS#3,,primary,Canonical ADS description JOHNNY ASKS FOR DATE; story day 4
+SCENE_34,Mermaid,Johnny first sees Mary,FIRST MERMAID GLIMPSE,https://johnny-castaway.com/mermaid.html,merarrive,MARY.ADS#2,,primary,Canonical ADS description JOHNNY GLIMPLSE MARY; story day 1
+SCENE_35,Mermaid,Johnny and Mary break up,MERMAID BREAKUP,https://johnny-castaway.com/mermaid.html,entice,MARY.ADS#4,,primary,Canonical ADS description JOHN AND MARY BREAK UP; story day 7
+SCENE_36,Escape,Johnny leaves the island,LEAVE THE ISLAND,https://johnny-castaway.com/leaving.html,paddle,MARY.ADS#5,,primary,Canonical ADS description JOHNNY LEAVES; story day 8
+SCENE_37,Rare and Unusual,Johnny melts in the sun,MELTING IN THE SUN,https://johnny-castaway.com/unusual.html,melt,MISCGAG.ADS#1,,primary,Canonical ADS description HOT SUMMER DAYS
+SCENE_38,Swimming,Shark attacks Johnny,SHARK ATTACK,https://johnny-castaway.com/swimming.html,attacked,MISCGAG.ADS#2,,primary,Canonical ADS description SHARK1
+SCENE_39,Technical,Ambient stand at A southwest,STAND A SW,,,STAND.ADS#1,,technical,Canonical ADS description MUN AMB POS A SW
+SCENE_40,Technical,Ambient stand at A west,STAND A W,,,STAND.ADS#2,,technical,Canonical ADS description MUN AMB POS A W
+SCENE_41,Technical,Ambient stand at A northwest,STAND A NW,,,STAND.ADS#3,,technical,Canonical ADS description MUN AMB POS A NW
+SCENE_42,Technical,Ambient stand at B southwest,STAND B SW,,,STAND.ADS#4,,technical,Canonical ADS description MUN AMB POS B SW
+SCENE_43,Technical,Ambient stand at B south,STAND B S,,,STAND.ADS#5,,technical,Canonical ADS description MUN AMB POS B S
+SCENE_44,Technical,Ambient stand at B southeast,STAND B SE,,,STAND.ADS#6,,technical,Canonical ADS description MUN AMB POS B SE
+SCENE_45,Technical,Ambient stand at C northeast,STAND C NE,,,STAND.ADS#7,,technical,Canonical ADS description MUN AMB POS C NE
+SCENE_46,Technical,Ambient stand at C east,STAND C E,,,STAND.ADS#8,,technical,Canonical ADS description MUN AMB POS C E
+SCENE_47,Technical,Ambient stand at D northwest,STAND D NW,,,STAND.ADS#9,,technical,Canonical ADS description MUN AMB POS D NW
+SCENE_48,Technical,Ambient stand at D northeast,STAND D NE,,,STAND.ADS#10,,technical,Canonical ADS description MUN AMB POS D NE
+SCENE_49,Technical,Ambient stand at E northwest,STAND E NW,,,STAND.ADS#11,,technical,Canonical ADS description MUN AMB POS E NW
+SCENE_50,Technical,Ambient stand at F northeast,STAND F NE,,,STAND.ADS#12,,technical,Canonical ADS description MUN AMB POS F NE
+SCENE_51,Common,Telescope at position A,TELESCOPE A,https://johnny-castaway.com/common.html,,STAND.ADS#15,,technical,Canonical ADS description TELESCOPE POS A
+SCENE_52,Common,Telescope at position C,TELESCOPE C,https://johnny-castaway.com/common.html,,STAND.ADS#16,,technical,Canonical ADS description TELESCOPE POS C
+SCENE_53,Escape,Suzy finds Johnnys message,SUZY FINDS MESSAGE,https://johnny-castaway.com/leaving.html,bottle,SUZY.ADS#1,,primary,Canonical ADS description SUZY CITY DWELLER; story day 3
+SCENE_54,Escape,Johnny meets Suzy,JOHNNY MEETS SUZY,https://johnny-castaway.com/leaving.html,eares,SUZY.ADS#2,,primary,Canonical ADS description JOHN MEETS SUZY; story day 9
+SCENE_55,Visitors,Unseen visitors pass the island,UNSEEN VISITORS,https://johnny-castaway.com/visitors.html,notseen,VISITOR.ADS#1,,primary,Canonical ADS description VISITOR 3
+SCENE_56,Visitors,A tanker visits the island,TANKER VISIT,https://johnny-castaway.com/visitors.html,bigship,VISITOR.ADS#3,,primary,Canonical ADS description VISITOR 6; HOLIDAY_NOK
+SCENE_57,Common,Coconut falls from the palm tree,COCONUT FALLS,https://johnny-castaway.com/common.html,coco,VISITOR.ADS#4,,primary,Canonical ADS description COCONUT DROP L AND R
+SCENE_58,Common,Coconut rolls around the island,COCONUT ROLLS,https://johnny-castaway.com/common.html,coco,VISITOR.ADS#6,,primary,Canonical ADS description COCONUT 360
+SCENE_59,Common,Johnny chases a coconut,CHASE THE COCONUT,https://johnny-castaway.com/common.html,coco,VISITOR.ADS#7,,primary,Canonical ADS description COCONUT CHASE
+SCENE_60,Visitors,Johnny hits a plane with a coconut,COCONUT HITS PLANE,https://johnny-castaway.com/visitors.html,plane,VISITOR.ADS#5,,primary,Canonical ADS description COCONUT VISITOR 5
+SCENE_61,Visitors,Would-be rescuers leave Johnny,WOULD-BE RESCUERS,https://johnny-castaway.com/visitors.html,,WALKSTUF.ADS#1,,primary,Canonical ADS description WOULDBEAS
+SCENE_62,Common,Johnny builds his raft,BUILD THE RAFT,https://johnny-castaway.com/common.html,raft,WALKSTUF.ADS#2,,primary,Canonical ADS description MJ RAFT
+SCENE_63,Common,Johnny goes jogging,JOGGING,https://johnny-castaway.com/common.html,,WALKSTUF.ADS#3,,primary,Canonical ADS description JOG
+CHECK_BUGS,Known bugs,Website bug reports,,,,,,checklist-only,Reference only; never map bugs into firmware names
+CHECK_EASTER,Calendar rules,Easter eggs,,https://johnny-castaway.com/list.html,E,,,checklist-only,Index entry lacks a usable date rule and current HOLIDAY.BMP has four overlays
+CHECK_FLYING_SAUCER,Rare and Unusual,Flying saucer encounter,,https://johnny-castaway.com/unusual.html,saucer,,,checklist-only,No unambiguous ADS identity yet
+CHECK_WHALE,Rare and Unusual,Johnny swallowed by a whale,,https://johnny-castaway.com/unusual.html,whale,,,checklist-only,No unambiguous ADS identity yet

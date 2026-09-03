@@ -1,0 +1,6 @@
+entry_id,title,start_month,start_day,end_month,end_day,overlay_id,mapping_status,source_url,notes
+HALLOWEEN,Halloween,10,29,10,31,1,active,https://johnny-castaway.com/annivers.html#halloween,Pumpkin overlay; site revision 29 January 2004
+ST_PATRICK,St. Patrick,3,15,3,17,2,active,https://johnny-castaway.com/annivers.html#stpats,Shamrock overlay; the live page has no stpats anchor but states the range
+CHRISTMAS,Christmas,12,23,12,25,3,active,https://johnny-castaway.com/annivers.html#xmas,Christmas tree overlay; site revision 29 January 2004
+NEW_YEAR,New Year,12,29,1,1,4,active,https://johnny-castaway.com/annivers.html#newyear,Happy New Year banner; range crosses the year boundary
+EASTER,Easter,,,,,,checklist-only,https://johnny-castaway.com/list.html,Index reference has no usable rule on the current Special Days page and HOLIDAY.BMP has four overlays

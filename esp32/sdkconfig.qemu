@@ -1,0 +1,8 @@
+CONFIG_JOHNNY_QEMU=y
+CONFIG_JOHNNY_QEMU_HEADLESS=y
+CONFIG_FREERTOS_UNICORE=y
+# QEMU executes the decoder far slower than the physical 240 MHz target.
+# Keep the physical watchdog configuration unchanged and use bounded host runs.
+CONFIG_ESP_TASK_WDT_INIT=n
+# QEMU's emulated SHA/GDMA peripheral cannot read buffers in emulated PSRAM.
+CONFIG_MBEDTLS_HARDWARE_SHA=n
