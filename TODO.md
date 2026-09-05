@@ -828,15 +828,25 @@ for publication, and the direct-panel gate remains open.
   the physical COM4 board. The local data image matched the normal build
   byte-for-byte; all flash regions verified and RTS hard-reset the board without
   erasing NVS.
-- [ ] Directly accept the latest Clock/weather/Reviewer presentation and control
-  persistence on the panel before promoting RC4 to stable.
+- [x] Directly accept the latest Clock/weather/Reviewer presentation and control
+  persistence on the panel. Closed 2026-09-05 by explicit user confirmation,
+  including smooth playback, switching and controls.
+- [x] Confirm weather refresh after reboot and revise the `STALE DATA` wording.
+  Implemented 2026-09-05: update time/saved/waiting labels on panel/controller;
+  five focused checks, controller syntax/state execution and normal build pass.
+  Identified N16R8 app-flash verified, NVS preserved and board RTS rebooted.
+  Serial confirms a fresh saved-location forecast at 91.683 seconds after boot.
+- [x] User visual acceptance of the new weather wording on the updated firmware.
+  Closed 2026-09-05: user confirmed "looks good".
 
 ## Ordered work queue
 
 Complete these items from top to bottom. Later work should not delay the release
 unless it exposes a stability, data-safety, or fidelity regression.
 
-1. [ ] **Finish the remaining release-critical fidelity comparison.**
+1. [x] **Finish the remaining release-critical fidelity comparison.**
+   Closed 2026-09-05 by explicit user confirmation that these checks passed.
+   Historical reference scope and limitations below are retained for context.
    Compare long-running scene order, transitions, timing, cloud speed and
    wrapping, waves, tides, holidays, and day/night behavior. The 11-hour video
    samples at the beginning and around 1, 5, 10, and 11 hours confirm the

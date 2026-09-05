@@ -33,7 +33,45 @@ part of this pass.
 | R1 | Rename repository to Castaway-Lookout | Complete | S1 | GitHub reports `DrWize/Castaway-Lookout`, default main; origin updated; Windows RC3 assets retained | 2026-09-05 |
 | R2 | Publish ESP32 RC4 prerelease | Complete | R1, P1 | Public RC4 has ZIP and checksum; tag points to `92be4bd`; prerelease=true | 2026-09-05 |
 | V1 | Verify GitHub state and downloads | Complete | R2 | Renamed repo/default main verified; anonymous RC4 downloads byte-match local files; Windows RC3 installer hash unchanged | 2026-09-05 |
-| H1 | Physical sidebar/control acceptance | Open, outside this pass | Existing RC4 firmware | Clock layout/colour, city selection, smoothness, Reviewer/Off, persistence, weather staleness | — |
+| H1 | Physical sidebar/control acceptance | Passed by user | Existing RC4 firmware | Clock/weather appearance, smooth playback, Reviewer/Off, controls and reboot persistence confirmed; weather refresh tracked separately below | 2026-09-05 |
+
+### H1 user observations — 2026-09-05
+
+- Acceptance update: the user explicitly confirms the real browser login,
+  physical presentation/control/persistence checks and release-critical fidelity
+  checks have passed. This is user acceptance evidence, not a new automated run.
+  Local diagnostic source/tests remain uncommitted; no root cause is asserted.
+
+- Login blocker: after reboot, the user reports "Server has encountered an
+  unexpected error" with the password box still visible. Approved diagnosis:
+  add stage-specific session-storage errors and sanitized serial NVS counts;
+  run focused checks, build normal firmware and app-flash without erasing
+  settings. Superseded by the user's successful-login confirmation above.
+
+- Confirmed by the user: the selected weather location survives reboot.
+- Reported: startup takes a long time; `STALE DATA` appears after reboot.
+  Startup duration has not been timed, and a successful post-reboot weather
+  refresh has not yet been confirmed.
+- Source inspection: normal firmware runs extensive deterministic/resource and
+  all-63-scene startup checks before starting networking. The installation guide
+  currently allows about 90 seconds; this is not a new measured boot time.
+- Cached forecasts are deliberately marked stale when restored. The weather
+  task attempts a fetch once Wi-Fi is connected and a location is configured,
+  checking eligibility every five seconds. It refreshes every 45 minutes and
+  currently also waits 45 minutes after a failed attempt. Selecting a location
+  triggers an earlier attempt. Success clears stale; failure retains the cache.
+- Follow-up candidates: shorten end-user startup by separating boot regression
+  fixtures from normal playback, and use a shorter retry after weather failures.
+  These are recorded for consideration; no firmware changes are made here.
+- Weather follow-up completed 2026-09-05: local firmware now shows `LAST UPDATED`
+  and time, `SAVED WEATHER` when time is unavailable, or `WAITING FOR WEATHER`
+  without a forecast. Controller wording matches and includes the update date.
+  Five focused checks, controller syntax/state execution and normal build pass.
+  COM4 N16R8 app-only flash verified and RTS rebooted without erasing NVS.
+  Serial confirms the saved Solna forecast refreshed at 91.683 seconds after
+  reboot. User confirmed the new wording "looks good" on 2026-09-05, closing
+  physical wording acceptance and the weather follow-up. Local changes remain
+  uncommitted; published RC4 assets have not been replaced.
 
 ## Documentation and packaging decisions
 

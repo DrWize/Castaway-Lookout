@@ -21,6 +21,23 @@ task can be closed. Keep long-term design in `PLAN.md`, ordered fidelity work in
 
 ## Current pickup — RC4 physical acceptance
 
+Update 2026-09-05: user confirmed login, physical controls/persistence,
+presentation/smoothness and release-critical fidelity checks passed. The local
+weather wording follow-up replaces `STALE DATA` with update time/saved/waiting
+labels on panel and controller. Five focused icon/login tests, controller JS
+syntax and normal build passed. COM4 was re-identified as ESP32-S3 rev 0.2,
+16 MB flash/8 MB PSRAM; app-only write verified and RTS rebooted, preserving NVS.
+Candidate: `0x127510` bytes, SHA-256
+`eca23cb337b03bb09f358d55d86d1f4c416d0d7723d876ae3a994ff0d9c1796d`.
+Reboot capture: ignored `build-web/weather-reboot-20260905.log`.
+Serial confirms `WEATHER: updated` for the saved Solna location at 91.683 seconds
+after reboot, following web startup at 86.873 seconds. Post-reboot refresh gate
+closed 2026-09-05. Controller timestamp/saved/waiting states execute correctly.
+User confirmed the new wording "looks good" on 2026-09-05. Physical wording
+acceptance passed; the weather follow-up is closed. Local changes remain
+uncommitted and the published RC4 package is unchanged.
+The original published-candidate evidence below is historical.
+
 The normal RC4 firmware is built at `0x126fc0` bytes with 62% of its
 application partition free. Its SHA-256 is
 `82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.

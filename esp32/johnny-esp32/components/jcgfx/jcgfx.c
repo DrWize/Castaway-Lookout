@@ -719,8 +719,8 @@ void jcgfx_draw_clock_weather_sidebar(
     if (!status->weather_available) {
         draw_weather_icon(destination, width, height, 688, 142, 255, false,
                           true);
-        draw_label(destination, width, height, 666, 216, "WEATHER", 3, white);
-        draw_label(destination, width, height, 674, 244, "WAITING", 3, muted);
+        draw_label(destination, width, height, 650, 216, "WAITING FOR", 2, muted);
+        draw_label(destination, width, height, 666, 244, "WEATHER", 3, white);
         return;
     }
     bool night = status->time_valid && (status->hour < 6 || status->hour >= 18);
@@ -744,18 +744,18 @@ void jcgfx_draw_clock_weather_sidebar(
     snprintf(line, sizeof(line), "LOW  %s%d.%d C", low < 0 ? "-" : "",
              abs(low) / 10, abs(low) % 10);
     draw_label(destination, width, height, 650, 308, line, 2, white);
+    bool updated_valid = status->time_valid && status->weather_updated_valid;
     draw_label(destination, width, height, 650, 362,
-               status->weather_stale ? "STALE DATA" : "CURRENT",
-               2, status->weather_stale ? yellow : muted);
-    if (status->weather_updated_valid) {
-        snprintf(line, sizeof(line), "UPDATED %02u:%02u",
+               updated_valid ? "LAST UPDATED" : "SAVED WEATHER", 2, muted);
+    if (updated_valid) {
+        snprintf(line, sizeof(line), "%02u:%02u",
                  status->weather_updated_hour, status->weather_updated_minute);
+        draw_label(destination, width, height, 650, 382, line, 2, muted);
     } else {
-        snprintf(line, sizeof(line), "UPDATED --:--");
+        draw_label(destination, width, height, 650, 382, "TIME UNKNOWN", 2, muted);
     }
     draw_label(destination, width, height, 650, 402, "DATA FROM METEO", 2,
                muted);
-    draw_label(destination, width, height, 650, 430, line, 2, muted);
 }
 
 static const char *review_label(jcgfx_validation_review_t review)

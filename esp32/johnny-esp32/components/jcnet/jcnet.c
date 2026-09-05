@@ -59,7 +59,7 @@ static const char CONTROL_PAGE[] =
 "<script>const el=id=>document.getElementById(id);const j=(u,o={})=>fetch(u,{headers:{'Content-Type':'application/json'},...o}).then(async r=>{if(!r.ok)throw Error(await r.text());return r.status==204?{}:r.json()});"
 "async function submitLogin(){try{await j('/api/v1/session',{method:'POST',body:JSON.stringify({password:el('p').value})});el('loginPanel').hidden=true;el('app').hidden=false;el('loginMsg').textContent='';await load()}catch(e){el('loginMsg').textContent=e.message||String(e)}}"
 "async function load(){let [s,c]=await Promise.all([j('/api/v1/status'),j('/api/v1/scenes')]);show(s);el('scenes').innerHTML=c.scenes.map(x=>`<button class=scene onclick=play('${x.id}')><small>${x.id} - ${x.category}</small><br>${x.title}</button>`).join('');await loadBugs()}"
-"function show(s){el('current').textContent=`${s.current_scene.id}: ${s.current_scene.title} | ${s.current_scene.ads} tag ${s.current_scene.tag} | frame ${s.frame}`;el('net').textContent=`${s.playback_mode} | ${s.effective_night?'Night':'Day'} | block ${s.cycle.block} scene ${s.cycle.position}/10 | ${s.shuffle_remaining} left`;el('mode').value=s.playback_mode;el('sidebar').value=s.sidebar_mode;el('sky').value=s.sky;el('holiday').value=s.holiday;el('review').hidden=s.playback_mode!='review';el('bugcount').textContent=s.bug_count;let w=s.weather;el('weather').textContent=!w.configured?'Choose a location.':`${w.location} | ${w.available?(w.temperature_tenths/10).toFixed(1)+' C, '+(w.low_tenths/10).toFixed(1)+' / '+(w.high_tenths/10).toFixed(1)+' C'+(w.stale?' (stale)':''):'waiting for weather'}`}"
+"function show(s){el('current').textContent=`${s.current_scene.id}: ${s.current_scene.title} | ${s.current_scene.ads} tag ${s.current_scene.tag} | frame ${s.frame}`;el('net').textContent=`${s.playback_mode} | ${s.effective_night?'Night':'Day'} | block ${s.cycle.block} scene ${s.cycle.position}/10 | ${s.shuffle_remaining} left`;el('mode').value=s.playback_mode;el('sidebar').value=s.sidebar_mode;el('sky').value=s.sky;el('holiday').value=s.holiday;el('review').hidden=s.playback_mode!='review';el('bugcount').textContent=s.bug_count;let w=s.weather;el('weather').textContent=!w.configured?'Choose a location.':`${w.location} | ${w.available?(w.temperature_tenths/10).toFixed(1)+' C, '+(w.low_tenths/10).toFixed(1)+' / '+(w.high_tenths/10).toFixed(1)+' C'+' | '+(s.time_synced&&w.updated_at>0?'Last updated '+new Date(w.updated_at*1000).toLocaleString(undefined,{timeZone:w.timezone||'UTC',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'Saved weather'):'Waiting for weather'}`}"
 "async function settings(){try{show(await j('/api/v1/settings',{method:'PUT',body:JSON.stringify({playback_mode:el('mode').value,sidebar_mode:el('sidebar').value,sky:el('sky').value,holiday:el('holiday').value})}));el('msg').textContent='Applied'}catch(e){el('msg').textContent=e.message||String(e)}}"
 "async function searchCity(){try{let r=await j('/api/v1/weather/search',{method:'POST',body:JSON.stringify({query:el('city').value})});window.locations=r.locations;let box=el('locations');box.replaceChildren();if(!r.locations.length){box.textContent='No matches';return}r.locations.forEach((x,i)=>{let b=document.createElement('button');b.textContent=x.name+(x.region?', '+x.region:'')+', '+x.country;b.onclick=()=>chooseCity(i);box.appendChild(b)})}catch(e){el('msg').textContent=e.message||String(e)}}"
 "async function chooseCity(i){try{let x=window.locations[i];show(await j('/api/v1/settings',{method:'PUT',body:JSON.stringify({location:{name:x.name,timezone:x.timezone,latitude:x.latitude,longitude:x.longitude}})}));el('locations').innerHTML='';el('msg').textContent='Location saved; weather will refresh shortly'}catch(e){el('msg').textContent=e.message||String(e)}}"
@@ -393,6 +393,29 @@ static esp_err_t setup_handler(httpd_req_t *request)
     return ESP_OK;
 }
 
+static esp_err_t session_storage_error(httpd_req_t *request,
+                                       const char *reference, esp_err_t error)
+{
+    ESP_LOGE(TAG, "LOGIN: ref=%s error=%s (0x%x)", reference,
+             esp_err_to_name(error), (unsigned)error);
+    nvs_stats_t stats = {0};
+    esp_err_t stats_error = nvs_get_stats(NULL, &stats);
+    if (stats_error == ESP_OK) {
+        ESP_LOGE(TAG,
+                 "LOGIN: NVS used=%u free=%u available=%u total=%u namespaces=%u",
+                 (unsigned)stats.used_entries, (unsigned)stats.free_entries,
+                 (unsigned)stats.available_entries, (unsigned)stats.total_entries,
+                 (unsigned)stats.namespace_count);
+    } else {
+        ESP_LOGE(TAG, "LOGIN: NVS statistics unavailable error=%s (0x%x)",
+                 esp_err_to_name(stats_error), (unsigned)stats_error);
+    }
+    char message[96];
+    snprintf(message, sizeof(message),
+             "Could not save your login session. Reference: %s", reference);
+    return httpd_resp_send_err(request, HTTPD_500_INTERNAL_SERVER_ERROR, message);
+}
+
 static esp_err_t session_handler(httpd_req_t *request)
 {
     char body[HTTP_BODY_MAX] = {0};
@@ -418,12 +441,19 @@ static esp_err_t session_handler(httpd_req_t *request)
     hex_encode(token, sizeof(token), hex);
     mbedtls_sha256((const unsigned char *)hex, strlen(hex), digest, 0);
     nvs_handle_t handle = 0;
+    const char *reference = "LOGIN_OPEN";
     esp_err_t err = nvs_open("jc_web", NVS_READWRITE, &handle);
-    if (err == ESP_OK) err = nvs_set_blob(handle, "session", digest,
-                                           sizeof(digest));
-    if (err == ESP_OK) err = nvs_commit(handle);
+    if (err == ESP_OK) {
+        reference = "LOGIN_WRITE";
+        err = nvs_set_blob(handle, "session", digest, sizeof(digest));
+    }
+    if (err == ESP_OK) {
+        reference = "LOGIN_COMMIT";
+        err = nvs_commit(handle);
+    }
     if (handle != 0) nvs_close(handle);
-    if (err != ESP_OK) return httpd_resp_send_500(request);
+    if (err != ESP_OK) return session_storage_error(request, reference, err);
+    ESP_LOGI(TAG, "LOGIN: session saved");
     char cookie[128];
     snprintf(cookie, sizeof(cookie),
              "jc_session=%s; Path=/; HttpOnly; SameSite=Strict; Max-Age=2592000",

@@ -1,6 +1,45 @@
 # Johnny Castaway ESP32 Port — Plan
 
+## Login acceptance — closed 2026-09-05
+
+Publication follow-up — 2026-09-05: user authorized committing and pushing the
+accepted changes to main and refreshing RC4 assets. Package the physically
+accepted `eca23cb3...` firmware with the exact committed source revision; verify
+public downloads and preserve the existing RC4 tag and Windows artifacts.
+
+The user confirms real browser login has passed, along with physical
+Clock/weather presentation, smooth playback, Reviewer/Off switching, controls,
+reboot persistence and release-critical fidelity checks. No new automated,
+build or flash evidence is claimed. Diagnostic source/tests remain uncommitted.
+Weather refresh after reboot and status wording remain open in the release
+readiness tracker. The original diagnostic scope follows for context.
+
+Diagnose the RC4 browser login HTTP 500 without erasing NVS or changing session
+persistence. Add safe open/write/commit error references and serial NVS counts,
+exercise the actual login handler with focused failure injection, build normal
+firmware, identify the N16R8 device, app-flash and reboot, then capture the user's
+browser retry. Do not close the task until the failing operation/error is known
+or a real login succeeds without reproducing the fault. Published RC4 assets,
+startup timing and weather retry behavior remain unchanged by this task.
+
 ## Goal
+
+### Weather wording follow-up — started 2026-09-05
+
+Replace `STALE DATA` with a last-update label/time when the clock and timestamp
+are valid, `SAVED WEATHER` otherwise, and `WAITING FOR WEATHER` without a saved
+forecast. Align the controller wording. Build normal firmware, identify and
+app-flash/reboot the board, then inspect serial evidence of a fresh forecast.
+Keep existing refresh scheduling and the published RC4 package unchanged.
+Status: panel/controller wording implemented; five focused icon/login tests,
+controller JavaScript syntax and normal build passed. Image `0x127510`, 62%
+app free; data image fits its partition. COM4 positively identified as ESP32-S3
+rev 0.2, 16 MB flash and 8 MB embedded PSRAM. App-only flash hash verified and
+RTS reboot completed with NVS preserved. Serial confirms a fresh saved-location
+forecast at 91.683 seconds after reboot (web ready at 86.873 seconds).
+Controller timestamp/saved/waiting state execution passed. Refresh gate closed
+2026-09-05. User confirmed the new wording "looks good" on 2026-09-05;
+physical wording acceptance passed and this follow-up is closed.
 
 Full-story *Johnny Castaway* playback on the Waveshare ESP32-S3-Touch-LCD-7 with a
 touch-driven settings and scene-browsing UI. Graphics only — the board has no audio
