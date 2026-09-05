@@ -27,9 +27,9 @@ You need:
   is accepted; the helper checks both automatically.
 - A **2.4 GHz Wi-Fi network** for the local browser controls.
 
-Download the [**ESP32 RC4 flashing ZIP**](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.4/JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0-rc.4.zip):
-`JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0-rc.4.zip`.
-The [RC4 release page](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4)
+Download the [**ESP32 2026.1.0 flashing ZIP**](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0/JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0.zip):
+`JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0.zip`.
+The [stable release page](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0)
 also provides its SHA-256 checksum. GitHub's **Source code** archives are not the
 flashing package.
 
@@ -94,7 +94,7 @@ flasher does not erase the settings partition: existing Johnny Wi-Fi,
 admin password, sidebar and playback settings are retained for this partition
 layout. An already configured board normally rejoins its saved network.
 
-There is no over-the-air updater in RC4. Do not follow developer erase-flash
+There is no over-the-air updater in 2026.1.0. Do not follow developer erase-flash
 commands for a normal installation or update. Keep your private game files and
 `jcdata.bin` out of shared copies of the package.
 
@@ -121,11 +121,11 @@ To enter download mode:
 2. Tap and release **RESET**, still holding BOOT.
 3. Release **BOOT**, then run **FLASH_ESP32.bat** again.
 
-RC4 is a prerelease. Final physical acceptance of Clock/weather presentation,
-control switching, persistence and smoothness is still open. ESP32 audio and
-SD-card resource loading are not included.
+2026.1.0 is the stable ESP32 release. Clock/weather presentation, control
+switching, persistence and smoothness have been physically accepted. ESP32
+audio and SD-card resource loading are not included.
 
 For help, [report an issue](https://github.com/DrWize/Castaway-Lookout/issues)
-with **ESP32 RC4**, your exact board model and the error text; omit passwords.
+with **ESP32 2026.1.0**, your exact board model and the error text; omit passwords.
 [Developer documentation](https://github.com/DrWize/Castaway-Lookout/blob/main/esp32/README.md)
 is optional and is not needed for these installation steps.

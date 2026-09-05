@@ -1,17 +1,12 @@
 # Castaway Lookout — ESP32 developer reference
 
-Published follow-up (2026-09-05): weather status now uses `LAST UPDATED` with a
-local time, `SAVED WEATHER` when time is unavailable, and `WAITING FOR WEATHER`
-without a forecast. Controller wording matches and includes the update date.
-Normal build and five focused checks pass; app-flash verified and board rebooted.
-Refreshed RC4 downloads contain this accepted firmware. See `RUNBOOK.md`
-for current refresh evidence. User visually accepted the new wording on
-2026-09-05; the weather follow-up is closed.
-
+[ESP32 2026.1.0 stable](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0)
+graduates the physically accepted RC4 behavior. Weather shows `LAST UPDATED`
+with a local time, `SAVED WEATHER` when time is unavailable and
+`WAITING FOR WEATHER` without a forecast. Controller text includes the date.
 For installation, use the [ESP32 setup guide](../docs/FLASH_ESP32_7_TOUCH.md).
-[ESP32 RC4 is published](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4)
-as a prerelease. For publication evidence, see the
-[release tracker](../docs/RELEASE_READINESS_PLAN.md).
+See `RUNBOOK.md` and the [release tracker](../docs/RELEASE_READINESS_PLAN.md)
+for exact firmware, source and publication evidence.
 
 This directory contains the native ESP-IDF port for the Waveshare
 ESP32-S3-Touch-LCD-7 (ESP32-S3, 16 MB flash, 8 MB PSRAM). It renders the
@@ -111,7 +106,7 @@ new administrator password. After joining the LAN the device advertises as
 `johnny-xxxx.local`. The administrator password protects the control page and
 all `/api/v1/` control/status routes through an opaque session cookie.
 
-RC4 identifies itself as `2026.1.0-rc.4`. The normal image is `0x126fc0` bytes
+Historical RC4 baseline: `2026.1.0-rc.4`. The normal image is `0x126fc0` bytes
 with 62% of its application partition free and SHA-256
 `82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
 Historical validation on 2026-09-04 recorded all 41 Python tests, catalog

@@ -1,5 +1,16 @@
 # Johnny Castaway ESP32 Port — Plan
 
+## Stable promotion — started 2026-09-05
+
+Promote the accepted ESP32 RC4 behavior to `2026.1.0` stable. Change only version
+metadata and release documentation/packaging defaults; preserve runtime code.
+Commit the stable source, build normal firmware, identify the N16R8 board,
+app-flash/reboot with NVS preserved and verify stable boot/weather via serial.
+Package from that exact source, publish `v2026.1.0` as latest stable, verify
+public ZIP/checksum downloads and update the release tracker. Prior user panel
+acceptance applies to unchanged behavior. Windows RC3 remains separately
+available with its existing clean-account acceptance gate.
+
 ## Login acceptance — closed 2026-09-05
 
 Publication follow-up — 2026-09-05: user authorized committing and pushing the

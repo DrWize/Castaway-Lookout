@@ -8,7 +8,7 @@ a dedicated Waveshare ESP32 display.
 | Platform | Download | Installation guide |
 | --- | --- | --- |
 | Windows 11 x64 | [Windows installer — RC3](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.3/JohnnyCastaway-Windows-11-x64-Setup.exe) | [Windows setup](docs/SETUP_GUIDE.md) |
-| Waveshare ESP32-S3-Touch-LCD-7, 800×480, N16R8 | [ESP32 flashing ZIP — RC4](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.4/JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0-rc.4.zip) | [ESP32 setup](docs/FLASH_ESP32_7_TOUCH.md) |
+| Waveshare ESP32-S3-Touch-LCD-7, 800×480, N16R8 | [ESP32 flashing ZIP — RC4](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0/JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0.zip) | [ESP32 setup](docs/FLASH_ESP32_7_TOUCH.md) |
 
 Both versions are release candidates. There is no macOS version.
 The existing installer and application still use the name **Johnny Castaway**.
@@ -30,9 +30,9 @@ You need the exact **Waveshare ESP32-S3-Touch-LCD-7, 800×480, 16 MB flash /
 8 MB PSRAM** board, a Windows 10/11 **x64** computer with internet access, a USB
 data cable, and your original `RESOURCE.MAP` and `RESOURCE.001` files.
 
-Download the **ESP32 RC4 ZIP** above, then:
+Download the **ESP32 2026.1.0 ZIP** above, then:
 
-1. Extract the complete ESP32 RC4 ZIP and copy your two resource files into `data`.
+1. Extract the complete ESP32 2026.1.0 ZIP and copy your two resource files into `data`.
 2. Connect the board's **UART1 USB-to-UART** port, with the UART switch at UART1.
 3. Double-click **FLASH_ESP32.bat**, check the detected hardware and confirm.
 4. Wait for completion and about **90 seconds** of startup checks, then follow
@@ -41,7 +41,8 @@ Download the **ESP32 RC4 ZIP** above, then:
 No Git, Python installation or ESP-IDF is needed. The package supports only the
 specified board; it does not support 7B or 8 MB flash variants. Read the
 [complete ESP32 setup and recovery guide](docs/FLASH_ESP32_7_TOUCH.md) before
-flashing. Final Clock/weather/sidebar control acceptance remains open in RC4.
+flashing. Clock/weather, sidebar controls, persistence and smooth playback have been
+physically accepted.
 
 ## Help
 

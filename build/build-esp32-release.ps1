@@ -1,6 +1,6 @@
 [CmdletBinding()]
 param(
-    [string]$Version = '2026.1.0-rc.4',
+    [string]$Version = '2026.1.0',
     [string]$BuildDirectory,
     [string]$SourceRevision
 )

@@ -5,7 +5,7 @@ set(EXTRA_COMPONENT_DIRS
     "${CMAKE_CURRENT_LIST_DIR}/johnny-esp32/components")
 
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-set(PROJECT_VER "2026.1.0-rc.4")
+set(PROJECT_VER "2026.1.0")
 project(johnny_esp32)
 
 set(JCDATA_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/data" CACHE PATH

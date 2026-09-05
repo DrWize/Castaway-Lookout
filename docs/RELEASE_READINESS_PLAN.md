@@ -165,3 +165,12 @@ links directly to the verified public assets.
   RC4 remains a prerelease; Windows artifacts are unchanged.
 - Prior build, focused checks, verified flash/reboot, fresh-weather serial
   evidence and user visual acceptance apply to these exact firmware bytes.
+
+## ESP32 stable promotion — 2026-09-05
+
+User authorized graduating the accepted RC4 to stable. Target: `v2026.1.0`,
+ESP32 firmware version `2026.1.0`, latest release with prerelease=false.
+Only version metadata, packaging defaults and documentation change; runtime
+behavior retains the user's RC4 acceptance. Build, identified-device flash,
+serial verification, package/source provenance and public download verification
+are in progress. Windows RC3 and its separate acceptance work remain unchanged.
