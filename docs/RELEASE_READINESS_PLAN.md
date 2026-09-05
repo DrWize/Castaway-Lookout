@@ -204,5 +204,13 @@ isolated clean source checkout, run Windows regression/build and vet checks,
 verify native PE metadata and installer packaging, then publish Windows assets
 alongside ESP32 in the existing stable release with explicit source provenance.
 The existing ESP32 stable tag stays fixed; a Windows-specific source tag will
-identify the Windows build. User clean-account/machine acceptance confirmation
-has been requested; publication awaits that evidence or explicit gate waiver.
+identify the Windows build. User confirmed "installer is ok, just checked the rc
+for windows" on 2026-09-05. This records RC installer acceptance; no separate
+claim is made that every screensaver scenario was retested.
+
+Windows preparation complete: clean source `f6d2921`, regression suite, native
+EXE/SCR builds, amd64 checks, go vet and Inno Setup build passed. Application
+and screensaver product version is 2026.1.0; numeric file/installer version
+2026.1.0.4 keeps upgrade ordering above RC3's 2026.1.0.3. Runtime changes since
+Windows RC3 are limited to the app version string; installer source changes
+are version metadata and renamed repository links. Publication is in progress.

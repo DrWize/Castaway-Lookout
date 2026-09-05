@@ -2,12 +2,12 @@
 
 [Choose a platform](../README.md) · [ESP32 setup](FLASH_ESP32_7_TOUCH.md)
 
-For **Windows 11 x64**. The current Windows release is **2026.1.0 RC3**.
+For **Windows 11 x64**. The current Windows release is **2026.1.0 stable**.
 The installer, Start menu entry and program still use **Johnny Castaway**.
 
 ## Install
 
-1. [Download the Windows RC3 installer](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.3/JohnnyCastaway-Windows-11-x64-Setup.exe)
+1. [Download the Windows 2026.1.0 installer](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0/JohnnyCastaway-Windows-11-x64-Setup.exe)
    (`JohnnyCastaway-Windows-11-x64-Setup.exe`).
 2. Run it using your normal Windows account. No administrator rights are needed.
 3. Choose **Download the verified archive from Internet Archive**, or **Use an
@@ -59,16 +59,15 @@ folder is retained.
 | Settings do not persist | Keep `JohnnyCastaway.ini` beside the application and screensaver in a folder your account can write to. |
 
 If setup still fails, [report the exact error](https://github.com/DrWize/Castaway-Lookout/issues)
-and mention **Windows RC3**. Clean-machine installer/screensaver acceptance is
-still pending before a stable release.
+and mention **Windows 2026.1.0**. The RC installer was checked and accepted before stable promotion.
 
 ## Optional portable setup
 
 Use this only if you prefer managing files yourself. For automatic screensaver
 registration and data setup, use the installer above.
 
-1. Download the [RC3 application](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.3/JohnnyCastaway-Windows-x64.exe)
-   and, optionally, the [RC3 screensaver](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.3/JohnnyCastaway-Windows-x64.scr).
+1. Download the [stable application](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0/JohnnyCastaway-Windows-x64.exe)
+   and, optionally, the [stable screensaver](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0/JohnnyCastaway-Windows-x64.scr).
 2. Put them in a folder you own, such as **Documents\JohnnyCastaway**.
    Rename them to `JohnnyCastaway.exe` and `JohnnyCastaway.scr` respectively.
    Enable file-name extensions in File Explorer if needed.

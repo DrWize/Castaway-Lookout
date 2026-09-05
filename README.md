@@ -7,7 +7,7 @@ a dedicated Waveshare ESP32 display.
 
 | Platform | Download | Installation guide |
 | --- | --- | --- |
-| Windows 11 x64 | [Windows installer — RC3](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.3/JohnnyCastaway-Windows-11-x64-Setup.exe) | [Windows setup](docs/SETUP_GUIDE.md) |
+| Windows 11 x64 | [Windows installer — stable 2026.1.0](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0/JohnnyCastaway-Windows-11-x64-Setup.exe) | [Windows setup](docs/SETUP_GUIDE.md) |
 | Waveshare ESP32-S3-Touch-LCD-7, 800×480, N16R8 | [ESP32 flashing ZIP — stable 2026.1.0](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0/JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0.zip) | [ESP32 setup](docs/FLASH_ESP32_7_TOUCH.md) |
 
 Both versions are release candidates. There is no macOS version.
@@ -15,7 +15,7 @@ The existing installer and application still use the name **Johnny Castaway**.
 
 ## Install on Windows
 
-1. Download and run the **Windows RC3 installer** above.
+1. Download and run the **Windows 2026.1.0 installer** above.
 2. Choose automatic verified data setup or select your existing `scrantic-run.zip`.
 3. Choose optional sound and whether to make Johnny your screensaver.
 4. Launch **Johnny Castaway** from the Start menu. Press **F1** for settings.
