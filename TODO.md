@@ -808,6 +808,10 @@ Phase 3 fidelity work.
 
 ## ESP32 7-inch Touch release package
 
+Current release: [ESP32 2026.1.0 stable](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0),
+published and download-verified 2026-09-05. The accepted RC4 runtime was rebuilt
+with stable version metadata only. Earlier RC4 publication evidence follows.
+
 Published 2026-09-05 as the [Castaway Lookout ESP32 RC4 prerelease](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4).
 The public ZIP and checksum were downloaded and verified. See the
 [release tracker](docs/RELEASE_READINESS_PLAN.md) for source revision and hashes.
@@ -876,10 +880,12 @@ unless it exposes a stability, data-safety, or fidelity regression.
    Windows Screen Saver Settings preview/install behavior. Also verify missing
    data errors, saved settings, unsigned-binary warnings, and normal input exit.
 
-5. [ ] **Promote the verified candidate to `v2026.1.0` stable.**
-   Publish final SHA-256 values and release notes, retain the source-only/data
-   policy, and confirm both downloadable artifacts were built from the stable
-   tag.
+5. [x] **Promote the accepted ESP32 candidate to `v2026.1.0` stable.**
+   Closed 2026-09-05: tag/source `4f3db04`, stable build and source CI passed;
+   identified N16R8 app flash/reboot and fresh-weather serial verified. Latest
+   stable ZIP/checksum publicly downloaded and byte-verified; exact hashes are
+   in the release tracker. Windows stable promotion remains separate and
+   depends on the clean-account/machine acceptance in item 4.
 
 6. [ ] **Run the physical CRT performance matrix.**
    Use `F9` at 1920x1080, 3840x2160, 5120x1440, and 7680x2160, including at

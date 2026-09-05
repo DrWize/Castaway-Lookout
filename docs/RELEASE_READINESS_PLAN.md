@@ -173,4 +173,24 @@ ESP32 firmware version `2026.1.0`, latest release with prerelease=false.
 Only version metadata, packaging defaults and documentation change; runtime
 behavior retains the user's RC4 acceptance. Build, identified-device flash,
 serial verification, package/source provenance and public download verification
-are in progress. Windows RC3 and its separate acceptance work remain unchanged.
+are complete. Windows RC3 and its separate acceptance work remain unchanged.
+
+Stable promotion closed 2026-09-05:
+
+- Source/tag: `4f3db04d65801c8834c6c4dfd608cbde70ff6abb` on main; annotated
+  `v2026.1.0` points to this exact package source revision. GitHub source CI passed.
+- Normal stable build passed; only 74 descriptor/checksum bytes differ from
+  the accepted RC4 app. Runtime bytes outside those regions are identical.
+- App: 1,209,616 bytes, SHA-256
+  `41c9b4ce4a3472efaebce88d66dcb606ed46a53e4bb9313dc83e1acce3a2ad7d`.
+- COM4 positively identified as ESP32-S3 rev 0.2, 16 MB flash/8 MB PSRAM;
+  app-only flash verified and RTS rebooted with NVS preserved. Serial reported
+  version 2026.1.0, web ready at 86.863 seconds and fresh weather at 91.407 seconds.
+- Stable ZIP: 852,998 bytes, SHA-256
+  `63f5549ab04dffc84a74b396e1d1e2cec7c71cc5de1211d8ffd2f477d3dab9be`.
+  Eleven-file inventory, guide, source revision and firmware checksums verified.
+- Public ZIP/checksum downloads byte-match local assets. GitHub latest reports
+  `v2026.1.0`, draft=false and prerelease=false. Installation links use stable.
+- Prior RC releases and Windows assets remain available unchanged. Physical
+  acceptance is inherited from unchanged RC4 behavior, not claimed as a new
+  independent visual test of the metadata-only stable build.

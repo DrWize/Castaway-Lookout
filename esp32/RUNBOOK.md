@@ -19,6 +19,22 @@ task can be closed. Keep long-term design in `PLAN.md`, ordered fidelity work in
    `ALL_SCENES_FIDELITY.md` whose prerequisites are complete and record any new
    scene finding in `SCENE_REVIEW.md` with identity, frame and visible symptom.
 
+## Stable promotion — 2026-09-05
+
+Version-only stable build passed. Source `4f3db04`; app `0x127510`, SHA-256
+`41c9b4ce4a3472efaebce88d66dcb606ed46a53e4bb9313dc83e1acce3a2ad7d`.
+Binary differs from accepted RC4 only in application descriptor/checksum.
+COM4 re-identified as ESP32-S3 rev 0.2, 16 MB flash and 8 MB embedded PSRAM.
+Stable ZIP: 852,998 bytes, SHA-256
+`63f5549ab04dffc84a74b396e1d1e2cec7c71cc5de1211d8ffd2f477d3dab9be`.
+Eleven-file archive, source revision, guide and firmware checksums verified.
+Stable reboot capture: ignored `build-web/stable-reboot-20260905.log`.
+Closed 2026-09-05: app-only write hash verified and RTS rebooted with NVS
+preserved. Serial reports `2026.1.0`, web ready at 86.863 seconds and a fresh
+saved-location forecast at 91.407 seconds. Source CI passed. Latest release
+`v2026.1.0` is public with draft=false/prerelease=false; anonymous ZIP/checksum
+downloads byte-match local assets. Earlier acceptance below is historical.
+
 ## Current pickup â€” RC4 physical acceptance
 
 Update 2026-09-05: user confirmed login, physical controls/persistence,

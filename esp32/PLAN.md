@@ -10,6 +10,13 @@ Package from that exact source, publish `v2026.1.0` as latest stable, verify
 public ZIP/checksum downloads and update the release tracker. Prior user panel
 acceptance applies to unchanged behavior. Windows RC3 remains separately
 available with its existing clean-account acceptance gate.
+Build complete: stable image `0x127510`, 62% app partition free. Binary comparison
+to accepted RC4 shows only 74 bytes changed in the application descriptor and
+checksum. Source/package revision: `4f3db04`. Package inventory and all firmware
+checksums pass. Closed 2026-09-05: app flash verified and RTS rebooted, serial
+reported stable version and fresh weather at 91.407 seconds, source CI passed,
+and latest stable release/public ZIP/checksum downloads were verified.
+
 
 ## Login acceptance — closed 2026-09-05
 
