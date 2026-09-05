@@ -1,65 +1,18 @@
 # Johnny Castaway ESP32 Port — Plan
 
-## Stable promotion — started 2026-09-05
+## Published baseline - 2026-09-05
 
-Promote the accepted ESP32 RC4 behavior to `2026.1.0` stable. Change only version
-metadata and release documentation/packaging defaults; preserve runtime code.
-Commit the stable source, build normal firmware, identify the N16R8 board,
-app-flash/reboot with NVS preserved and verify stable boot/weather via serial.
-Package from that exact source, publish `v2026.1.0` as latest stable, verify
-public ZIP/checksum downloads and update the release tracker. Prior user panel
-acceptance applies to unchanged behavior. Windows RC3 remains separately
-available with its existing clean-account acceptance gate.
-Build complete: stable image `0x127510`, 62% app partition free. Binary comparison
-to accepted RC4 shows only 74 bytes changed in the application descriptor and
-checksum. Source/package revision: `4f3db04`. Package inventory and all firmware
-checksums pass. Closed 2026-09-05: app flash verified and RTS rebooted, serial
-reported stable version and fresh weather at 91.407 seconds, source CI passed,
-and latest stable release/public ZIP/checksum downloads were verified.
+Windows and ESP32 2026.1.0 stable are published. ESP32 source is 4f3db04;
+Windows source is f6d2921. See the [publication record](../docs/RELEASE_READINESS_PLAN.md)
+for tags, downloads, hashes and distinct acceptance evidence.
 
-
-## Login acceptance — closed 2026-09-05
-
-Publication follow-up — 2026-09-05: user authorized committing and pushing the
-accepted changes to main and refreshing RC4 assets. Package the physically
-accepted `eca23cb337b03bb09f358d55d86d1f4c416d0d7723d876ae3a994ff0d9c1796d` firmware with the exact committed source revision; verify
-public downloads and preserve the existing RC4 tag and Windows artifacts.
-Closed 2026-09-05: source `38a478c` pushed to main; RC4 ZIP and checksum
-refreshed and anonymous downloads byte-match the local package.
-
-The user confirms real browser login has passed, along with physical
-Clock/weather presentation, smooth playback, Reviewer/Off switching, controls,
-reboot persistence and release-critical fidelity checks. No new automated,
-build or flash evidence is claimed. Diagnostic source/tests remain uncommitted.
-Weather refresh after reboot and status wording remain open in the release
-readiness tracker. The original diagnostic scope follows for context.
-
-Diagnose the RC4 browser login HTTP 500 without erasing NVS or changing session
-persistence. Add safe open/write/commit error references and serial NVS counts,
-exercise the actual login handler with focused failure injection, build normal
-firmware, identify the N16R8 device, app-flash and reboot, then capture the user's
-browser retry. Do not close the task until the failing operation/error is known
-or a real login succeeds without reproducing the fault. Published RC4 assets,
-startup timing and weather retry behavior remain unchanged by this task.
+Login, physical sidebar controls/persistence, presentation/smoothness, fidelity
+and weather wording are accepted by the user. Stable flash/reboot and a fresh
+forecast at 91.407 seconds are serial-verified. These checks are closed; future
+interpreter/lifecycle work below remains separate. The original diagnosis and
+intermediate build history are retained in Git history.
 
 ## Goal
-
-### Weather wording follow-up — started 2026-09-05
-
-Replace `STALE DATA` with a last-update label/time when the clock and timestamp
-are valid, `SAVED WEATHER` otherwise, and `WAITING FOR WEATHER` without a saved
-forecast. Align the controller wording. Build normal firmware, identify and
-app-flash/reboot the board, then inspect serial evidence of a fresh forecast.
-Keep existing refresh scheduling and the published RC4 package unchanged.
-Status: panel/controller wording implemented; five focused icon/login tests,
-controller JavaScript syntax and normal build passed. Image `0x127510`, 62%
-app free; data image fits its partition. COM4 positively identified as ESP32-S3
-rev 0.2, 16 MB flash and 8 MB embedded PSRAM. App-only flash hash verified and
-RTS reboot completed with NVS preserved. Serial confirms a fresh saved-location
-forecast at 91.683 seconds after reboot (web ready at 86.873 seconds).
-Controller timestamp/saved/waiting state execution passed. Refresh gate closed
-2026-09-05. User confirmed the new wording "looks good" on 2026-09-05;
-physical wording acceptance passed and this follow-up is closed.
 
 Full-story *Johnny Castaway* playback on the Waveshare ESP32-S3-Touch-LCD-7 with a
 touch-driven settings and scene-browsing UI. Graphics only — the board has no audio
@@ -86,7 +39,7 @@ local control, NTP time sync and the implemented Open-Meteo weather sidebar.
 |---|---|
 | Framework | ESP-IDF v5.5.5 (board wiki requires ≥ v5.3) |
 | Language / std | C (GNU17), CMake components + Kconfig |
-| Engine baseline | JohnnyCx64 @ `343c7f5` (`v2026.1.0-rc.1-30-g343c7f5`); jc_reborn (C) as semantic reference where the Go code is ambiguous |
+| Engine baseline | JohnnyCx64 @ `343c7f5`; jc_reborn (C) as semantic reference where the Go code is ambiguous |
 | Data files | Original Sierra `RESOURCE.MAP` (MD5 `374e6d05c5e0acd88fb5af748948c899`) + `RESOURCE.001` (MD5 `8bb6c99e9129806b5089a39d24228a36`) |
 | Build output | `bootloader.bin`, `partition-table.bin`, `johnny_esp32.bin`, `jcdata.bin`; ELF/map retained for debugging |
 | Framebuffer | RGB565 800×480, double-buffered in PSRAM via `esp_lcd` RGB panel DMA |
@@ -319,13 +272,13 @@ semantics.
    a ten-Day/ten-Night block sequence with stable island anchors.
 4. **Implemented — Clock/weather sidebar and release flasher.** The 160-pixel
    sidebar provides SNTP time/date, city weather, colour pixel icons, stale state
-   and local update time. RC4 includes a installation guide and double-click Windows
+   and local update time. The stable package includes an installation guide and double-click Windows
    flasher that generates private `jcdata.bin` locally and positively identifies
    the supported N16R8 board before writing.
-5. **Close the current physical acceptance gate.** Directly confirm sidebar
-   layout/colours, smooth playback, authenticated switching, persistence,
-   weather staleness, review actions, Day/Night blocks and holidays. Serial,
-   HTTP, framebuffer and flash evidence do not close this gate.
+5. **Completed - physical acceptance, 2026-09-05.** User confirmed sidebar
+   presentation, smoothness, authenticated controls, switching, persistence
+   and release-critical fidelity. Weather wording was also visually accepted.
+   Automated/serial evidence remains separate from user observation.
 6. **Complete remaining Phase 3 interpreter parity.** Implement random-range
    `TIMER`, root/current tag separation, clip and missing draw primitives,
    scoped saved zones, local/global `IF_LASTPLAYED`, stable semantic z-order and
@@ -429,7 +382,7 @@ frame 1 twice with stable island state; direct panel acceptance is still open.
 
 ### Implementation history through 2026-09-03
 
-This section preserves the review/runtime history. The current RC4 state and
+This section preserves the review/runtime history. The current stable state and
 remaining gates are the ordered plan above.
 
 Phases 0-2 and the first bounded part of Phase 3 are operational. The physical
@@ -514,7 +467,7 @@ code, or desktop GLSL shaders. These are platform-specific or outside the ESP32 
 | 6 | Wi-Fi softAP provisioning, SNTP, NVS credentials and authenticated LAN control implemented | Clock self-sets after reboot; setup and authenticated API behavior remain bounded and local |
 | 7 | Open-Meteo weather, colour icons, temperature/high-low/update rendering and staleness handling implemented in combined Clock mode | Stale/unavailable data keeps layout stable; fetches cause no visible playback impact |
 | 8 | *(future)* Optional Soft CRT composition pass and persisted Off/Soft setting | Soft reduces harsh pixel edges without filtering the side bar or touch UI; Off remains pixel-identical; both modes sustain 30 fps on device and survive reboot |
-| 9 | Authenticated local webpage/API, password claiming, mDNS, scene control, settings and bug log implemented; web-disable/touch mirroring deferred | Unauthenticated or malformed changes are rejected; current physical switching/persistence gate remains open |
+| 9 | Authenticated local webpage/API, password claiming, mDNS, scene control, settings and bug log implemented; web-disable/touch mirroring deferred | Unauthenticated or malformed changes are rejected; physical switching/persistence accepted 2026-09-05 |
 
 ## Risks & Mitigations
 

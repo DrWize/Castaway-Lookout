@@ -1,7 +1,7 @@
 # Castaway Lookout — ESP32 developer reference
 
 [ESP32 2026.1.0 stable](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0)
-graduates the physically accepted RC4 behavior. Weather shows `LAST UPDATED`
+provides the physically accepted playback and controls. Weather shows `LAST UPDATED`
 with a local time, `SAVED WEATHER` when time is unavailable and
 `WAITING FOR WEATHER` without a forecast. Controller text includes the date.
 For installation, use the [ESP32 setup guide](../docs/FLASH_ESP32_7_TOUCH.md).
@@ -88,9 +88,8 @@ be committed.
   exact 2x scale in the existing blue, yellow, white and muted RGB565 palette.
   Reviewer touch controls are active only in Reviewer mode. Wi-Fi setup and
   REVIEW-only diagnostics remain visible regardless of the saved mode.
-  The 2026-09-04 candidate is flashed; automated/build/serial gates pass, while
-  authenticated city selection and direct Clock/Reviewer panel acceptance are
-  intentionally left to the user.
+  Stable 2026.1.0 is flashed and published. Authenticated controls, persistence
+  and direct Clock/Reviewer presentation were accepted by the user on 2026-09-05.
 
 See `ALL_SCENES_FIDELITY.md` for the numbered findings and their completion
 state. A successful build, QEMU run or serial boot does not by itself prove
@@ -106,23 +105,20 @@ new administrator password. After joining the LAN the device advertises as
 `johnny-xxxx.local`. The administrator password protects the control page and
 all `/api/v1/` control/status routes through an opaque session cookie.
 
-Historical RC4 baseline: `2026.1.0-rc.4`. The normal image is `0x126fc0` bytes
-with 62% of its application partition free and SHA-256
-`82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
-Historical validation on 2026-09-04 recorded all 41 Python tests, catalog
-generation, uncached Go tests and the normal ESP-IDF build passing. These checks
-are not being rerun for the 2026-09-05 documentation/publication pass. The end-user release ZIP is built by
-`../build/build-esp32-release.ps1`; it includes the installation guide, verified
-firmware binaries and a double-click Windows flasher, but no copyrighted game
-data. Its flasher generated a byte-identical private `jcdata.bin`, positively
-identified the COM4 N16R8 board, verified every write and hard-reset it without
-erasing NVS.
+The stable normal firmware identifies itself as `2026.1.0`. Its image is
+`0x127510` bytes with 62% app partition free; SHA-256:
+`41c9b4ce4a3472efaebce88d66dcb606ed46a53e4bb9313dc83e1acce3a2ad7d`.
+Source tag `v2026.1.0` points to `4f3db04`. Build, source CI, identified-device
+flash/reboot and public download verification passed on 2026-09-05. Serial
+confirmed a fresh forecast at 91.407 seconds after reboot.
 
-The current Clock sidebar uses colour 64x64 weather icons, `DATA FROM METEO`
-and a local `UPDATED HH:MM` timestamp. The web/setup pages use the Windows
-Castaway Lookout SVG favicon. Serial and HTTP gates pass; direct panel acceptance
-of icon/label spacing, smoothness, authenticated mode switching and reboot
-persistence remains open.
+The end-user ZIP is built by `../build/build-esp32-release.ps1` and includes
+firmware, checksums, guide and Windows flasher; original game data is external.
+Clock uses colour 64x64 weather icons, `DATA FROM METEO`, `LAST UPDATED` and local
+time, with saved/waiting states as appropriate. User acceptance of presentation,
+smoothness, switching, controls and persistence is closed. See the
+[publication record](../docs/RELEASE_READINESS_PLAN.md) for historical evidence
+and separate outstanding engineering work.
 
 ## Prerequisites
 

@@ -19,71 +19,27 @@ task can be closed. Keep long-term design in `PLAN.md`, ordered fidelity work in
    `ALL_SCENES_FIDELITY.md` whose prerequisites are complete and record any new
    scene finding in `SCENE_REVIEW.md` with identity, frame and visible symptom.
 
-## Stable promotion — 2026-09-05
+## Current pickup - stable 2026.1.0
 
-Version-only stable build passed. Source `4f3db04`; app `0x127510`, SHA-256
-`41c9b4ce4a3472efaebce88d66dcb606ed46a53e4bb9313dc83e1acce3a2ad7d`.
-Binary differs from accepted RC4 only in application descriptor/checksum.
-COM4 re-identified as ESP32-S3 rev 0.2, 16 MB flash and 8 MB embedded PSRAM.
+Published 2026-09-05. Source 4f3db04, app 0x127510 bytes (62% app partition free),
+SHA-256 `41c9b4ce4a3472efaebce88d66dcb606ed46a53e4bb9313dc83e1acce3a2ad7d`.
 Stable ZIP: 852,998 bytes, SHA-256
 `63f5549ab04dffc84a74b396e1d1e2cec7c71cc5de1211d8ffd2f477d3dab9be`.
-Eleven-file archive, source revision, guide and firmware checksums verified.
-Stable reboot capture: ignored `build-web/stable-reboot-20260905.log`.
-Closed 2026-09-05: app-only write hash verified and RTS rebooted with NVS
-preserved. Serial reports `2026.1.0`, web ready at 86.863 seconds and a fresh
-saved-location forecast at 91.407 seconds. Source CI passed. Latest release
-`v2026.1.0` is public with draft=false/prerelease=false; anonymous ZIP/checksum
-downloads byte-match local assets. Earlier acceptance below is historical.
+The package's 11-file inventory, source revision and firmware checksums passed;
+public downloads matched. Original resources and private jcdata.bin are excluded.
 
-## Current pickup â€” RC4 physical acceptance
+The board was identified on COM4 as ESP32-S3 rev 0.2, 16 MB flash/8 MB PSRAM.
+App-only write was hash-verified, followed by RTS reboot with NVS preserved.
+Serial reported version 2026.1.0, web ready at 86.863 seconds and fresh weather
+at 91.407 seconds. Capture: ignored build-web/stable-reboot-20260905.log.
+Re-identify the board before future flashes; COM4 is historical evidence.
 
-Update 2026-09-05: user confirmed login, physical controls/persistence,
-presentation/smoothness and release-critical fidelity checks passed. The local
-weather wording follow-up replaces `STALE DATA` with update time/saved/waiting
-labels on panel and controller. Five focused icon/login tests, controller JS
-syntax and normal build passed. COM4 was re-identified as ESP32-S3 rev 0.2,
-16 MB flash/8 MB PSRAM; app-only write verified and RTS rebooted, preserving NVS.
-Candidate: `0x127510` bytes, SHA-256
-`eca23cb337b03bb09f358d55d86d1f4c416d0d7723d876ae3a994ff0d9c1796d`.
-Reboot capture: ignored `build-web/weather-reboot-20260905.log`.
-Serial confirms `WEATHER: updated` for the saved Solna location at 91.683 seconds
-after reboot, following web startup at 86.873 seconds. Post-reboot refresh gate
-closed 2026-09-05. Controller timestamp/saved/waiting states execute correctly.
-User confirmed the new wording "looks good" on 2026-09-05. Physical wording
-acceptance passed; the weather follow-up is closed. Source `38a478c` is on main
-and the refreshed RC4 ZIP/checksum were publicly downloaded and byte-verified.
-The original published-candidate evidence below is historical.
-
-The normal RC4 firmware is built at `0x126fc0` bytes with 62% of its
-application partition free. Its SHA-256 is
-`82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
-It is versioned `2026.1.0-rc.4` and is packaged by
-`../build/build-esp32-release.ps1` with the installation
-`../docs/FLASH_ESP32_7_TOUCH.md` guide and a double-click Windows flasher.
-The ZIP excludes `jcdata.bin`; the flasher verifies the user's canonical game
-files and creates that private image locally.
-
-The packaged flasher was tested end to end on COM4. It produced a byte-identical
-1,177,126-byte `jcdata.bin`, identified the target as ESP32-S3 revision 0.2
-N16R8, wrote bootloader/partition/application/data regions with verified hashes,
-preserved NVS and hard-reset the board. The prior normal-firmware gates remain
-green: 41 Python tests, catalog generation, uncached Go tests, normal ESP-IDF
-build, icon framebuffer fixture, all 63 scene starts, LAN root/favicons and
-weather refresh. Historical intermediate hashes have been removed from this
-current-pickup section; they remain available in Git history.
-
-The only current acceptance work is physical:
-
-1. Confirm the 64x64 weather icons, `DATA FROM METEO`, local update timestamp,
-   spacing and native scene smoothness.
-2. In the authenticated webpage, switch Clock, Reviewer and Off; verify city
-   selection, settings/session and bug-log persistence across reboot.
-3. Exercise Review Previous/Looks OK/Bug/Next, report copy/resolve/Clear All,
-   the ten-Day/ten-Night sequence, holidays, stale-weather presentation and
-   disabled reviewer hitboxes outside Reviewer mode.
-
-Do not infer these visual or authenticated-state results from build, QEMU,
-framebuffer, flash, HTTP reachability or serial evidence.
+User acceptance is closed for login, presentation, controls, switching,
+persistence, smoothness, fidelity and weather wording. The stable binary retains
+that accepted runtime; only descriptor/checksum bytes differ from the build
+at 38a478c. Do not infer additional physical tests from serial or build results.
+Continue only the separately tracked interpreter/lifecycle or other requested
+work. See [publication evidence](../docs/RELEASE_READINESS_PLAN.md).
 
 ## Activate the repo-local toolchain
 

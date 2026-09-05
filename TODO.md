@@ -513,9 +513,9 @@ command profiles and the required end-of-run handoff.
 
 ### ESP32 next leg: runtime review, bug log and story blocks — added 2026-09-04
 
-24. [ ] **Settings and authenticated API contract**
+24. [x] **Settings and authenticated API contract**
     - Added: 2026-09-04
-    - Status: implemented; authenticated live mutation/persistence pending
+    - Status: accepted by the user on 2026-09-05
     - Changes: Add persisted `normal | review` playback mode and the fourth Sky
       value `cycle`; migrate existing Sky/Holiday settings without loss. Extend
       status and settings JSON and add authenticated bug-log routes.
@@ -525,18 +525,18 @@ command profiles and the required end-of-run handoff.
       the configured administrator password authenticates through the real
       Chrome webpage and loads the protected status, settings, scene catalog
       and bug-log views.
-    - Remaining gate: authenticated live API mutation and reboot-persistence test
-    - Closed:
-25. [ ] **Runtime ordered Review mode**
+    - Remaining gate: none for the accepted controls/persistence/fidelity scope
+    - Closed: 2026-09-05, user acceptance; technical evidence above is historical
+25. [x] **Runtime ordered Review mode**
     - Added: 2026-09-04
-    - Status: implemented; authenticated live and physical validation pending
+    - Status: accepted by the user on 2026-09-05
     - Changes: Run scenes 1-63 in order, repeat the current event until Looks
       OK, Bug, Previous or Next, and resume the preserved shuffle on exit.
       Keep the completed `jc_review` ledger unchanged.
     - Validation: 2026-09-04 host contract tests, normal/review builds and strict
       QEMU pass; runtime self-checks cover Review parsing/navigation wiring.
-    - Remaining gate: authenticated live navigation and physical control review
-    - Closed:
+    - Remaining gate: none for the accepted controls/persistence/fidelity scope
+    - Closed: 2026-09-05, user acceptance; technical evidence above is historical
 26. [ ] **Persistent webpage bug log**
     - Added: 2026-09-04
     - Status: implemented; authenticated live and physical web validation pending
@@ -549,27 +549,27 @@ command profiles and the required end-of-run handoff.
       unauthenticated access returns HTTP 401 as required.
     - Remaining gate: persistence, sanitization, copy fallback and physical web QA
     - Closed:
-27. [ ] **Ten-scene Day/Night Cycle**
+27. [x] **Ten-scene Day/Night Cycle**
     - Added: 2026-09-04
-    - Status: implemented; physical sequence validation pending
+    - Status: accepted by the user on 2026-09-05
     - Changes: Alternate ten completed scene transitions in Day and ten in
       Night; do not count repeats or rewinds and restart at Day after reboot.
     - Validation: 2026-09-04 firmware self-check covers Day at boot, Night after
       ten transitions and Day again after twenty; strict QEMU and physical-board
       boot self-checks pass.
-    - Remaining gate: direct-panel ten-transition sequence review
-    - Closed:
-28. [ ] **Block-stable island placement**
+    - Remaining gate: none for the accepted controls/persistence/fidelity scope
+    - Closed: 2026-09-05, user acceptance; technical evidence above is historical
+28. [x] **Block-stable island placement**
     - Added: 2026-09-04
-    - Status: implemented; firmware and direct-panel validation pending
+    - Status: accepted by the user on 2026-09-05
     - Changes: Reuse a variable island anchor for each ten-scene block; limit a
       new block anchor to 64 horizontal and 32 vertical pixels of movement while
       retaining authored fixed-left behavior.
     - Validation: 2026-09-04 firmware self-check covers the 64-pixel horizontal
       and 32-pixel vertical block-boundary limits; QEMU and physical boot logs
       show the same variable anchor reused across independent scene starts.
-    - Remaining gate: direct-panel continuity and composition acceptance
-    - Closed:
+    - Remaining gate: none for the accepted controls/persistence/fidelity scope
+    - Closed: 2026-09-05, user acceptance; technical evidence above is historical
 29. [x] **Automated validation**
     - Added: 2026-09-04
     - Status: complete
@@ -627,10 +627,10 @@ command profiles and the required end-of-run handoff.
     - Remaining gate: copied-report/action QA, authenticated settings/session
       and bug-record persistence, and user physical display acceptance
     - Closed:
-32. [ ] **Web-controlled physical reviewer sidebar**
+32. [x] **Web-controlled physical reviewer sidebar**
     - Added: 2026-09-04
-    - Status: RC4 implementation, automated, build, package, flash and serial
-      gates complete; authenticated physical acceptance remains
+    - Status: implementation and technical validation complete; user physical
+      acceptance closed 2026-09-05
     - Changes: Persist `sidebar_mode = off | clock | review`, default Off, and
       expose it through the authenticated webpage/API independently of
       Normal/Review playback. Off is black with no sidebar touch controls;
@@ -643,20 +643,17 @@ command profiles and the required end-of-run handoff.
       SVG favicon.
     - Validation: All 41 Python tests, catalog generation, embedded JavaScript
       syntax validation, uncached Go tests, `git diff --check` and the normal
-      RC4 build pass. The `0x126fc0` image has 62% app-partition free and SHA-256
+      2026-09-04 build passed. That historical `0x126fc0` image has 62% app-partition free and SHA-256
       `82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
       The release flasher produced byte-identical canonical data, identified
       COM4 as ESP32-S3 revision 0.2 N16R8, verified every write and hard-reset
       without erasing NVS. Serial previously passed the icon, PSRAM/data/runtime
       and all 63 catalog-start gates; live root and favicon returned HTTP 200.
       The user accepted the default-Off black sidebar.
-    - Remaining gate: log in, search/select the intended city, choose Clock and
-      physically confirm icon clarity/colours, `DATA FROM METEO`, the displayed
-      local update time, time/date/weather layout and
-      native scene smoothness;
-      then verify Reviewer, Off, reboot persistence, stale handling and disabled
-      Off/Clock reviewer hitboxes. Do not rerun broad automated suites.
-    - Closed:
+    - Remaining gate: none for the sidebar release acceptance.
+    - Closed: 2026-09-05, user confirmed login, visual presentation, controls,
+      switching, persistence, smoothness and weather wording.
+
 
 ### ESP32 Windows-aligned SCR and island lifecycle — approved 2026-09-01
 
@@ -803,20 +800,16 @@ Phase 3 fidelity work.
   preserve the previous current-user screensaver for uninstall restoration.
 - [ ] User test: first install, app launch, sound playback, `/c`, `/s`, Windows
   preview, idle activation, later sound installation, and uninstall.
-- [x] Published the Windows RC3 installer and standalone EXE/SCR on 2026-08-25.
-  Clean-account acceptance remains a separate gate before stable promotion.
+- [x] Published the Windows installer and standalone EXE/SCR on 2026-08-25.
+  Stable 2026.1.0 followed on 2026-09-05; full screensaver follow-up remains open.
 
 ## ESP32 7-inch Touch release package
 
 Current release: [ESP32 2026.1.0 stable](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0),
-published and download-verified 2026-09-05. The accepted RC4 runtime was rebuilt
-with stable version metadata only. Earlier RC4 publication evidence follows.
-
-Published 2026-09-05 as the [Castaway Lookout ESP32 RC4 prerelease](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4).
-The public ZIP and checksum were downloaded and verified. See the
-[release tracker](docs/RELEASE_READINESS_PLAN.md) for source revision and hashes.
-The earlier validation below is historical; no tests/builds/flashing were rerun
-for publication, and the direct-panel gate remains open.
+published and download-verified 2026-09-05. User physical acceptance is closed.
+See the [release tracker](docs/RELEASE_READINESS_PLAN.md) for exact source,
+artifact hashes and separate build, flash, serial and user acceptance evidence.
+The implementation checks below include historical validation.
 
 - [x] Add a single end-user flashing page at
   `docs/FLASH_ESP32_7_TOUCH.md`, covering supported hardware, original-data
@@ -825,7 +818,7 @@ for publication, and the direct-panel gate remains open.
   official Espressif esptool 4.12.0, verifies the canonical resource pair,
   creates private `jcdata.bin`, discovers COM ports and proceeds only after an
   ESP32-S3 N16R8 identity check.
-- [x] Add reproducible RC4 ZIP packaging with bootloader, partition table,
+- [x] Add reproducible ESP32 ZIP packaging with bootloader, partition table,
   application, firmware checksums, flasher and guide. Do not include
   copyrighted `RESOURCE.MAP`, `RESOURCE.001` or generated `jcdata.bin`.
 - [x] Validate the packaged script against an invalid-port no-write path and
@@ -842,7 +835,7 @@ for publication, and the direct-panel gate remains open.
   Serial confirms a fresh saved-location forecast at 91.683 seconds after boot.
 - [x] User visual acceptance of the new weather wording on the updated firmware.
   Closed 2026-09-05: user confirmed "looks good".
-- [x] Publish the accepted follow-up to main and refresh RC4 downloads.
+- [x] Publish the accepted follow-up to main and refresh ESP32 downloads.
   Closed 2026-09-05: source `38a478c`; ZIP/checksum anonymously downloaded
   and byte-verified. See the release tracker for firmware and archive hashes.
 
@@ -862,20 +855,16 @@ unless it exposes a stability, data-safety, or fidelity regression.
    further night-palette or transition changes. If no reliable night reference
    is available, keep the limitation documented and proceed.
 
-2. [x] **Publish the RC4 source snapshot to `main`.**
-   Correction recorded 2026-09-05: RC3 is published, but live GitHub main was
-   still `343c7f5`; RC4 source and packaging were pending on the ESP32 branch.
-   Closed 2026-09-05: `039813d` is verified on main and the repository is now
-   `DrWize/Castaway-Lookout`. Follow [the release tracker](docs/RELEASE_READINESS_PLAN.md)
-   for RC4 prerelease publication and download verification. Generated
-   executables and original game data remain excluded from source control.
+2. [x] **Publish the stable source to main.**
+   Closed 2026-09-05: ESP32 source 4f3db04 and Windows source f6d2921 are on
+   main, identified by separate platform tags in the publication record.
 
-3. [x] **Create `v2026.1.0-rc.3` with the Windows installer.**
-   Published 2026-08-25 with the paired native binaries, per-user installer,
-   verified data setup and Castaway Lookout icon.
+3. [x] **Publish the Windows stable installer and standalone binaries.**
+   Closed 2026-09-05: user installer acceptance, native validation, source CI
+   and public asset download checks are recorded in the release tracker.
 
 4. [ ] **Complete the full separate-account Windows screensaver checklist.**
-   Update 2026-09-05: user checked the RC installer and confirmed it is OK;
+   Update 2026-09-05: user checked the installer and confirmed it is OK;
    Windows stable published with that installer acceptance. The full checklist
    below remains follow-up evidence, not a claim that every scenario was tested.
    Verify clean first launch with the default `scrantic` convention, explicit
@@ -883,12 +872,12 @@ unless it exposes a stability, data-safety, or fidelity regression.
    Windows Screen Saver Settings preview/install behavior. Also verify missing
    data errors, saved settings, unsigned-binary warnings, and normal input exit.
 
-5. [x] **Promote the accepted ESP32 candidate to `v2026.1.0` stable.**
+5. [x] **Promote the accepted ESP32 firmware to `v2026.1.0` stable.**
    Closed 2026-09-05: tag/source `4f3db04`, stable build and source CI passed;
    identified N16R8 app flash/reboot and fresh-weather serial verified. Latest
    stable ZIP/checksum publicly downloaded and byte-verified; exact hashes are
    in the release tracker. Windows stable was also published 2026-09-05 after
-   user RC installer acceptance: source `f6d2921`, native builds/tests/vet and
+   user installer acceptance: source `f6d2921`, native builds/tests/vet and
    CI passed; public installer/EXE/SCR/checksums/manifest byte-verified. Full
    screensaver follow-up evidence remains in item 4.
 
@@ -1020,7 +1009,7 @@ and display decisions remain in [`ROADMAP.md`](ROADMAP.md).
   catalog in source instead of the INI, displayed the active portable or
   LocalAppData INI path, and added separate PNG `Content` and `Content Label`
   metadata.
-- [x] Created the focused `agent/fidelity-ui-rc2` branch and committed the
+- [x] Created the focused fidelity/UI branch (historical branch name retained in Git history) and committed the
   fidelity, configuration, interface, test, and documentation work.
 - [x] Migrated to a Windows 11-only native x64 codebase. One MinGW64/amd64
   toolchain now builds and tests both `JohnnyCastaway.exe` and

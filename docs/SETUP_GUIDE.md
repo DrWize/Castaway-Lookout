@@ -59,7 +59,7 @@ folder is retained.
 | Settings do not persist | Keep `JohnnyCastaway.ini` beside the application and screensaver in a folder your account can write to. |
 
 If setup still fails, [report the exact error](https://github.com/DrWize/Castaway-Lookout/issues)
-and mention **Windows 2026.1.0**. The RC installer was checked and accepted before stable promotion.
+and mention **Windows 2026.1.0**. The installer was checked and accepted before stable promotion.
 
 ## Optional portable setup
 

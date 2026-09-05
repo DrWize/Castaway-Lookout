@@ -16,3 +16,5 @@
 - [Windows performance measurements](PERFORMANCE.md)
 - [Fidelity audit](FIDELITY_AUDIT.md) and [ESP32 physical review](../esp32/SCENE_REVIEW.md)
 - [Attribution and data notice](../NOTICE.md)
+
+- [2026.1.0 stable release notes](releases/2026.1.0.md)

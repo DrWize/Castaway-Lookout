@@ -259,8 +259,6 @@ removes it, and an empty list stops on `ALL RESOLVED`.
 
 - Default-Off physical gate: accepted by the user. The normal firmware shows a
   completely black reserved 160x480 sidebar.
-- Still pending: turn the Reviewer sidebar On through the authenticated webpage,
-  confirm the complete controls appear without changing the native 640x480
-  scene, turn it Off again, and confirm the saved state after reboot. RC4's
-  packaged flasher, board-identification, verified-write and hard-reset gates
-  pass, but they do not replace this direct panel check.
+- Closed 2026-09-05: user confirmed authenticated Reviewer/Off switching,
+  native presentation and reboot persistence passed. Flash, serial and panel
+  acceptance remain distinct evidence; the scene ledger above is unchanged.
