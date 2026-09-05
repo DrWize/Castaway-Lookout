@@ -194,3 +194,15 @@ Stable promotion closed 2026-09-05:
 - Prior RC releases and Windows assets remain available unchanged. Physical
   acceptance is inherited from unchanged RC4 behavior, not claimed as a new
   independent visual test of the metadata-only stable build.
+
+## Windows stable promotion — started 2026-09-05
+
+User requested the same stable promotion for Windows. Prepare 2026.1.0
+application, screensaver and installer; keep installation identity/settings and
+runtime behavior unchanged. Update version metadata and links, build from an
+isolated clean source checkout, run Windows regression/build and vet checks,
+verify native PE metadata and installer packaging, then publish Windows assets
+alongside ESP32 in the existing stable release with explicit source provenance.
+The existing ESP32 stable tag stays fixed; a Windows-specific source tag will
+identify the Windows build. User clean-account/machine acceptance confirmation
+has been requested; publication awaits that evidence or explicit gate waiver.

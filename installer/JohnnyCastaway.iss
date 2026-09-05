@@ -1,5 +1,5 @@
 #define AppName "Johnny Castaway 2026"
-#define AppVersion "2026.1.0-rc.3"
+#define AppVersion "2026.1.0"
 #define AppPublisher "DrWize"
 
 [Setup]
@@ -7,8 +7,8 @@ AppId={{8EBBA4D8-31CE-4B6C-A7F6-65A3F37D7260}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppPublisher={#AppPublisher}
-AppPublisherURL=https://github.com/DrWize/JohnnyCx64
-AppSupportURL=https://github.com/DrWize/JohnnyCx64/issues
+AppPublisherURL=https://github.com/DrWize/Castaway-Lookout
+AppSupportURL=https://github.com/DrWize/Castaway-Lookout/issues
 DefaultDirName={localappdata}\Programs\JohnnyCastaway
 DefaultGroupName=Johnny Castaway 2026
 DisableProgramGroupPage=yes
@@ -26,10 +26,10 @@ CloseApplications=yes
 RestartApplications=no
 SetupIconFile=..\assets\icons\candidates\castaway-lookout.ico
 UninstallDisplayIcon={app}\JohnnyCastaway.exe
-VersionInfoVersion=2026.1.0.3
+VersionInfoVersion=2026.1.0.4
 VersionInfoDescription=Johnny Castaway 2026 Windows 11 x64 Setup
 VersionInfoProductName=Johnny Castaway 2026
-VersionInfoProductVersion=2026.1.0.3
+VersionInfoProductVersion=2026.1.0.4
 
 [Files]
 Source: "..\build\JohnnyCastaway.exe"; DestDir: "{app}"; Flags: ignoreversion
