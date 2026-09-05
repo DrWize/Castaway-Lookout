@@ -34,8 +34,8 @@ Serial confirms `WEATHER: updated` for the saved Solna location at 91.683 second
 after reboot, following web startup at 86.873 seconds. Post-reboot refresh gate
 closed 2026-09-05. Controller timestamp/saved/waiting states execute correctly.
 User confirmed the new wording "looks good" on 2026-09-05. Physical wording
-acceptance passed; the weather follow-up is closed. Local changes remain
-uncommitted and the published RC4 package is unchanged.
+acceptance passed; the weather follow-up is closed. Source `38a478c` is on main
+and the refreshed RC4 ZIP/checksum were publicly downloaded and byte-verified.
 The original published-candidate evidence below is historical.
 
 The normal RC4 firmware is built at `0x126fc0` bytes with 62% of its

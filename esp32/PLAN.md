@@ -4,8 +4,10 @@
 
 Publication follow-up — 2026-09-05: user authorized committing and pushing the
 accepted changes to main and refreshing RC4 assets. Package the physically
-accepted `eca23cb3...` firmware with the exact committed source revision; verify
+accepted `eca23cb337b03bb09f358d55d86d1f4c416d0d7723d876ae3a994ff0d9c1796d` firmware with the exact committed source revision; verify
 public downloads and preserve the existing RC4 tag and Windows artifacts.
+Closed 2026-09-05: source `38a478c` pushed to main; RC4 ZIP and checksum
+refreshed and anonymous downloads byte-match the local package.
 
 The user confirms real browser login has passed, along with physical
 Clock/weather presentation, smooth playback, Reviewer/Off switching, controls,

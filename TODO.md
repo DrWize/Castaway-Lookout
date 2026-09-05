@@ -838,6 +838,9 @@ for publication, and the direct-panel gate remains open.
   Serial confirms a fresh saved-location forecast at 91.683 seconds after boot.
 - [x] User visual acceptance of the new weather wording on the updated firmware.
   Closed 2026-09-05: user confirmed "looks good".
+- [x] Publish the accepted follow-up to main and refresh RC4 downloads.
+  Closed 2026-09-05: source `38a478c`; ZIP/checksum anonymously downloaded
+  and byte-verified. See the release tracker for firmware and archive hashes.
 
 ## Ordered work queue
 

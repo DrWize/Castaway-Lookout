@@ -144,3 +144,24 @@ links directly to the verified public assets.
   `7cf840099fbb87e3c8b77b4de13fe8ff9be23944feb19e1d2f940879756f4d4d`.
 - No tests, firmware builds or flashing were performed. Existing GitHub CI was
   left unchanged. H1 remains open; publication is not physical acceptance.
+
+## Accepted firmware republished — 2026-09-05
+
+- User authorized updating main and publishing the accepted follow-up.
+- Firmware source commit: `38a478c6478dde55b5177c28494aad345a9975db`, pushed
+  and verified on main. Includes weather wording, login storage diagnostics,
+  focused login tests and dated user acceptance records.
+- RC4 ZIP and checksum replaced with the accepted firmware package; release
+  notes now describe the changes, validation and completed physical acceptance.
+- Firmware: 1,209,616 bytes, SHA-256
+  `eca23cb337b03bb09f358d55d86d1f4c416d0d7723d876ae3a994ff0d9c1796d`.
+- ZIP: 853,015 bytes, SHA-256
+  `c38b6773012554746b78fc89d2c628f2696787264676c62c3ad61e81f5dc5826`.
+- Anonymous ZIP/checksum downloads byte-match local assets. The 11-file archive
+  contains the accepted app bytes and exact source revision in SOURCE.md;
+  original resources, private data and credentials are excluded.
+- Existing RC4 tag `92be4bd` is retained. Release notes explicitly distinguish
+  the updated package source from GitHub's automatic original-tag source archive.
+  RC4 remains a prerelease; Windows artifacts are unchanged.
+- Prior build, focused checks, verified flash/reboot, fresh-weather serial
+  evidence and user visual acceptance apply to these exact firmware bytes.

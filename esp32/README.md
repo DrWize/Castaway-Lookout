@@ -1,10 +1,10 @@
 # Castaway Lookout — ESP32 developer reference
 
-Local follow-up (2026-09-05): weather status now uses `LAST UPDATED` with a
+Published follow-up (2026-09-05): weather status now uses `LAST UPDATED` with a
 local time, `SAVED WEATHER` when time is unavailable, and `WAITING FOR WEATHER`
 without a forecast. Controller wording matches and includes the update date.
 Normal build and five focused checks pass; app-flash verified and board rebooted.
-Published RC4 downloads still contain the earlier firmware. See `RUNBOOK.md`
+Refreshed RC4 downloads contain this accepted firmware. See `RUNBOOK.md`
 for current refresh evidence. User visually accepted the new wording on
 2026-09-05; the weather follow-up is closed.
 
