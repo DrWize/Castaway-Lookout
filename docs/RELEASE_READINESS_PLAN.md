@@ -35,7 +35,7 @@ part of this pass.
 | V1 | Verify GitHub state and downloads | Complete | R2 | Renamed repo/default main verified; anonymous RC4 downloads byte-match local files; Windows RC3 installer hash unchanged | 2026-09-05 |
 | H1 | Physical sidebar/control acceptance | Passed by user | Existing RC4 firmware | Clock/weather appearance, smooth playback, Reviewer/Off, controls and reboot persistence confirmed; weather refresh tracked separately below | 2026-09-05 |
 
-### H1 user observations — 2026-09-05
+### H1 user observations 2026-09-05
 
 - Acceptance update: the user explicitly confirms the real browser login,
   physical presentation/control/persistence checks and release-critical fidelity
@@ -105,7 +105,7 @@ Success: a new user can select the correct download and finish setup without
 developer documentation. GitHub main contains the intended source and docs;
 the renamed repository serves the RC4 ZIP and checksum.
 
-## Static inspection evidence — 2026-09-05
+## Static inspection evidence â€” 2026-09-05
 
 - Firmware descriptor: project `johnny_esp32`, version `2026.1.0-rc.4`, built
   `Sep 4 2026 22:32:42`; binary length 1,208,256 bytes. It matches the baseline
@@ -123,7 +123,7 @@ assembled after S1; its static preparation preceded the source integration.
 The RC4 guide ships byte-for-byte in the published ZIP. The landing page now
 links directly to the verified public assets.
 
-## Published result — 2026-09-05
+## Published result â€” 2026-09-05
 
 - Repository: [DrWize/Castaway-Lookout](https://github.com/DrWize/Castaway-Lookout),
   default branch `main`. Local checkout remains in its existing JohnnyCx64
@@ -145,7 +145,7 @@ links directly to the verified public assets.
 - No tests, firmware builds or flashing were performed. Existing GitHub CI was
   left unchanged. H1 remains open; publication is not physical acceptance.
 
-## Accepted firmware republished � 2026-09-05
+## Accepted firmware republished — 2026-09-05
 
 - User authorized updating main and publishing the accepted follow-up.
 - Firmware source commit: `38a478c6478dde55b5177c28494aad345a9975db`, pushed
@@ -166,7 +166,7 @@ links directly to the verified public assets.
 - Prior build, focused checks, verified flash/reboot, fresh-weather serial
   evidence and user visual acceptance apply to these exact firmware bytes.
 
-## ESP32 stable promotion � 2026-09-05
+## ESP32 stable promotion — 2026-09-05
 
 User authorized graduating the accepted RC4 to stable. Target: `v2026.1.0`,
 ESP32 firmware version `2026.1.0`, latest release with prerelease=false.
@@ -195,7 +195,7 @@ Stable promotion closed 2026-09-05:
   acceptance is inherited from unchanged RC4 behavior, not claimed as a new
   independent visual test of the metadata-only stable build.
 
-## Windows stable promotion � started 2026-09-05
+## Windows stable promotion — started 2026-09-05
 
 User requested the same stable promotion for Windows. Prepare 2026.1.0
 application, screensaver and installer; keep installation identity/settings and
