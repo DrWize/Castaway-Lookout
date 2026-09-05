@@ -19,29 +19,38 @@ task can be closed. Keep long-term design in `PLAN.md`, ordered fidelity work in
    `ALL_SCENES_FIDELITY.md` whose prerequisites are complete and record any new
    scene finding in `SCENE_REVIEW.md` with identity, frame and visible symptom.
 
-## Current pickup — provision and visually accept web-control firmware
+## Current pickup — RC4 physical acceptance
 
-The schema-2 review closure passed on 2026-09-03. COM4 was re-identified as an
-ESP32-S3 rev 0.2 with 16 MB flash and 8 MB PSRAM. The REVIEW-only image is
-`johnny_esp32.bin` size `0x5ee20`, SHA-256
-`55f791db3a3a4af7962e9e4a9eb89202d87b09375eb02f36c3a63bdd6ede6f2b`.
-After a hard reset, serial restored `ok=63 review=0 complete=1`, matched catalog
-fingerprint `eb04eb66746ae074`, emitted the empty final shortlist and reported
-`REVIEW-ONLY: ALL RESOLVED` without fatal runtime errors.
+The normal RC4 firmware is built at `0x126fc0` bytes with 62% of its
+application partition free. Its SHA-256 is
+`82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
+It is versioned `2026.1.0-rc.4` and is packaged by
+`../build/build-esp32-release.ps1` with the one-page
+`../docs/FLASH_ESP32_7_TOUCH.md` guide and a double-click Windows flasher.
+The ZIP excludes `jcdata.bin`; the flasher verifies the user's canonical game
+files and creates that private image locally.
 
-The 2026-09-03 normal image was flashed after a full erase on the identified
-COM4 ESP32-S3 N16R8. It boots randomized 63-scene playback and setup AP
-`Johnny-59D8`. Read the current numeric setup password from the panel or serial;
-it is regenerated while the device remains unprovisioned.
+The packaged flasher was tested end to end on COM4. It produced a byte-identical
+1,177,126-byte `jcdata.bin`, identified the target as ESP32-S3 revision 0.2
+N16R8, wrote bootloader/partition/application/data regions with verified hashes,
+preserved NVS and hard-reset the board. The prior normal-firmware gates remain
+green: 41 Python tests, catalog generation, uncached Go tests, normal ESP-IDF
+build, icon framebuffer fixture, all 63 scene starts, LAN root/favicons and
+weather refresh. Historical intermediate hashes have been removed from this
+current-pickup section; they remain available in Git history.
 
-1. Connect to the displayed AP, open `http://192.168.4.1`, and submit 2.4 GHz
-   Wi-Fi credentials plus a new administrator password.
-2. Confirm the station address/SNTP sync and `johnny-59d8.local` in serial.
-3. Exercise login/logout, status, scenes, settings, selected-scene and Random
-   routes with a cookie jar, then reboot and confirm settings/session behavior.
-4. Ask for direct panel confirmation of smoothness, switching, Day/Night, each
-   holiday, suppression, stale pixels and drift. Do not infer visual acceptance
-   from serial or API responses.
+The only current acceptance work is physical:
+
+1. Confirm the 64x64 weather icons, `DATA FROM METEO`, local update timestamp,
+   spacing and native scene smoothness.
+2. In the authenticated webpage, switch Clock, Reviewer and Off; verify city
+   selection, settings/session and bug-log persistence across reboot.
+3. Exercise Review Previous/Looks OK/Bug/Next, report copy/resolve/Clear All,
+   the ten-Day/ten-Night sequence, holidays, stale-weather presentation and
+   disabled reviewer hitboxes outside Reviewer mode.
+
+Do not infer these visual or authenticated-state results from build, QEMU,
+framebuffer, flash, HTTP reachability or serial evidence.
 
 ## Activate the repo-local toolchain
 

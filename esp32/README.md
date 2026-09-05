@@ -1,4 +1,7 @@
-# Johnny Castaway ESP32-S3
+# Castaway Lookout — ESP32 developer reference
+
+For installation, use the [ESP32 setup guide](../docs/FLASH_ESP32_7_TOUCH.md).
+For publication status, see the [release tracker](../docs/RELEASE_READINESS_PLAN.md).
 
 This directory contains the native ESP-IDF port for the Waveshare
 ESP32-S3-Touch-LCD-7 (ESP32-S3, 16 MB flash, 8 MB PSRAM). It renders the
@@ -16,6 +19,8 @@ work.
 
 - [`RUNBOOK.md`](RUNBOOK.md) — start here for the current pickup, exact commands,
   validation profiles and end-of-run handoff.
+- [`../docs/FLASH_ESP32_7_TOUCH.md`](../docs/FLASH_ESP32_7_TOUCH.md) — complete
+  end-user Windows flashing and first-start guide.
 - [`ALL_SCENES_FIDELITY.md`](ALL_SCENES_FIDELITY.md) — ordered list of every
   discovered scene repair and remaining engine-wide fidelity task.
 - [`SCENE_REVIEW.md`](SCENE_REVIEW.md) — authoritative physical review evidence
@@ -55,6 +60,32 @@ be committed.
 - A bounded local Wi-Fi setup portal, authenticated JSON API and responsive
   embedded scene controller. Sky and Special Days settings apply immediately
   and persist independently of scene timing.
+- Persisted Normal/Review playback selection. Runtime Review walks scenes 1-63
+  in order, holds each scene for Looks OK, Bug, Previous or Next, then returns
+  to the normal shuffle without modifying the historical `jc_review` ledger.
+- A separate bounded `jc_bug` log with one sanitized report per scene, webpage
+  Copy, Copy All, resolve and confirmed Clear All controls, plus authenticated
+  JSON routes for capture, retrieval, resolution and clearing.
+- A persisted Cycle sky setting with ten completed daytime transitions followed
+  by ten nighttime transitions. Variable islands share one anchor per ten-scene
+  block and move by at most 64 horizontal or 32 vertical pixels at a boundary;
+  authored fixed-left placement remains authoritative.
+- A persisted **Sidebar** selector in the authenticated webpage: Off, Clock &
+  weather, or Reviewer. Normal firmware defaults to Off. Clock mode keeps the
+  native 640x480 scene on the left and uses the 160x480 right strip for SNTP
+  time/date and Open-Meteo current temperature, condition and today's high/low.
+  The panel labels the source `DATA FROM METEO` and shows the last successful
+  update in the location's local time.
+  City search stores the chosen name, coordinates and timezone; the last good
+  forecast is retained and marked stale after a failed 45-minute refresh.
+  The current condition uses embedded colour-layered pixel art adapted from
+  Dhole's CC BY-SA 4.0 `weather-pixel-icons`: a 32x32 source mask is rendered at
+  exact 2x scale in the existing blue, yellow, white and muted RGB565 palette.
+  Reviewer touch controls are active only in Reviewer mode. Wi-Fi setup and
+  REVIEW-only diagnostics remain visible regardless of the saved mode.
+  The 2026-09-04 candidate is flashed; automated/build/serial gates pass, while
+  authenticated city selection and direct Clock/Reviewer panel acceptance are
+  intentionally left to the user.
 
 See `ALL_SCENES_FIDELITY.md` for the numbered findings and their completion
 state. A successful build, QEMU run or serial boot does not by itself prove
@@ -70,10 +101,23 @@ new administrator password. After joining the LAN the device advertises as
 `johnny-xxxx.local`. The administrator password protects the control page and
 all `/api/v1/` control/status routes through an opaque session cookie.
 
-The 2026-09-03 physical flash is awaiting Wi-Fi provisioning and direct visual
-inspection. QEMU was deliberately skipped for this run. Panel acceptance must
-still cover smooth playback, scene switching, Day/Night, every holiday overlay,
-`HOLIDAY_NOK` suppression, stale pixels and display drift.
+RC4 identifies itself as `2026.1.0-rc.4`. The normal image is `0x126fc0` bytes
+with 62% of its application partition free and SHA-256
+`82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
+Historical validation on 2026-09-04 recorded all 41 Python tests, catalog
+generation, uncached Go tests and the normal ESP-IDF build passing. These checks
+are not being rerun for the 2026-09-05 documentation/publication pass. The end-user release ZIP is built by
+`../build/build-esp32-release.ps1`; it includes the one-page guide, verified
+firmware binaries and a double-click Windows flasher, but no copyrighted game
+data. Its flasher generated a byte-identical private `jcdata.bin`, positively
+identified the COM4 N16R8 board, verified every write and hard-reset it without
+erasing NVS.
+
+The current Clock sidebar uses colour 64x64 weather icons, `DATA FROM METEO`
+and a local `UPDATED HH:MM` timestamp. The web/setup pages use the Windows
+Castaway Lookout SVG favicon. Serial and HTTP gates pass; direct panel acceptance
+of icon/label spacing, smoothness, authenticated mode switching and reboot
+persistence remains open.
 
 ## Prerequisites
 
@@ -142,10 +186,11 @@ $johnnyPort = "COMx"
 python -m esptool --chip esp32s3 --port $johnnyPort flash_id
 ```
 
-Build, flash and monitor the intended profile. For normal web-control work:
+Build, flash and monitor the intended profile. For normal web-control work,
+these commands preserve NVS settings. A full erase is a separate destructive
+developer reset and is not part of the end-user installation/update workflow:
 
 ```powershell
-python -m esptool --chip esp32s3 --port $johnnyPort erase_flash
 idf.py -B build-web -p $johnnyPort flash
 idf.py -B build-web -p $johnnyPort monitor
 ```
@@ -157,7 +202,8 @@ supporting regression environment, not a replacement for the physical panel.
 
 ## Deferred features and boundaries
 
-Touch-menu parity, weather, layout/clock controls, the optional Soft CRT pass,
+Touch-menu parity, general Left/Center/Right layout, the optional Soft CRT pass,
 OTA, HTTPS/public exposure and sub-TTM browsing remain deferred. Audio, SD-card
 resource loading, Bluetooth, screenshots and advanced CRT effects also remain
-outside the current ESP32 scope.
+outside the current ESP32 scope. Wi-Fi, authenticated local web control, weather
+and the mutually exclusive Off/Clock/Reviewer sidebar are implemented.

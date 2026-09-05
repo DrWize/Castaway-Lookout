@@ -1,0 +1,4 @@
+Copy your original RESOURCE.MAP and RESOURCE.001 files into this folder.
+
+Do not rename them. Then return to the package root and double-click
+FLASH_ESP32.bat. See FLASHING.md in the package root for the complete instructions.

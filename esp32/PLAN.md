@@ -5,8 +5,8 @@
 Full-story *Johnny Castaway* playback on the Waveshare ESP32-S3-Touch-LCD-7 with a
 touch-driven settings and scene-browsing UI. Graphics only — the board has no audio
 hardware, so sound is explicitly out of scope. Sierra data is embedded in internal
-flash; no SD card is required. The SoC's Wi-Fi is used opportunistically for NTP time
-sync, with a weather overlay (Open-Meteo) planned as a future phase.
+flash; no SD card is required. Wi-Fi provides first-boot setup, authenticated
+local control, NTP time sync and the implemented Open-Meteo weather sidebar.
 
 ## Hardware Target (verified)
 
@@ -29,7 +29,7 @@ sync, with a weather overlay (Open-Meteo) planned as a future phase.
 | Language / std | C (GNU17), CMake components + Kconfig |
 | Engine baseline | JohnnyCx64 @ `343c7f5` (`v2026.1.0-rc.1-30-g343c7f5`); jc_reborn (C) as semantic reference where the Go code is ambiguous |
 | Data files | Original Sierra `RESOURCE.MAP` (MD5 `374e6d05c5e0acd88fb5af748948c899`) + `RESOURCE.001` (MD5 `8bb6c99e9129806b5089a39d24228a36`) |
-| Build output | `bootloader.bin`, `partition-table.bin`, `johnny-esp32.bin`, `jcdata.bin`; ELF/map retained for debugging |
+| Build output | `bootloader.bin`, `partition-table.bin`, `johnny_esp32.bin`, `jcdata.bin`; ELF/map retained for debugging |
 | Framebuffer | RGB565 800×480, double-buffered in PSRAM via `esp_lcd` RGB panel DMA |
 | Internal graphics | 4-bpp palettized (16 colors), matching the original |
 
@@ -64,9 +64,9 @@ offset  size   content
 
 | Pool | Usage |
 |---|---|
-| Flash | ~14 % of 16 MB (app ~0.8 MB + data 1.15 MB + fonts/menus ~0.05 MB, with a future allowance of <0.1 MB for compressed web assets, API routes, and authentication) |
+| Flash | Current app ~1.16 MB plus 1.15 MB private data image; the 3 MB app partition remains 62% free |
 | PSRAM | ~3.0 MB of 8 MB: 2× framebuffer 1.5 MB + composition 800×480 RGB565 0.75 MB (native scene plus optional side bar) + background layers ~0.3 MB + sprite/decompression buffers <0.5 MB |
-| Internal SRAM | Stacks, DMA descriptors, GT911/I2C buffers; framebuffers stay in PSRAM. Wi-Fi activity adds ~30–50 KB transient (plus ~40–50 KB TLS heap during weather fetches in the future phase). The future web server must use bounded connections and remain within an additional 40 KB active-heap budget. |
+| Internal SRAM | Stacks, DMA descriptors, GT911/I2C buffers and bounded Wi-Fi/HTTP/TLS work; framebuffers stay in PSRAM and weather fetches run outside playback |
 
 Rendering always preserves the native 640×480 canvas with no scaling or cropping. Three
 layout presets control its horizontal placement on the 800×480 panel:
@@ -76,11 +76,11 @@ layout presets control its horizontal placement on the 800×480 panel:
   information bar.
 - **Right bar:** Johnny occupies `x=0..639`; a 160×480 information bar occupies `x=640..799`.
 
-Clock and weather are independent side-bar options. Center hides both without changing their
-saved enabled states, so returning to Left bar or Right bar restores the selected content. The
-factory default is Right bar with both clock and weather enabled. Layout, clock visibility, and
-weather visibility are persisted in NVS. A selected side bar remains present even when both
-content options are disabled. Optional nearest-neighbor 1.25× stretch mode is deferred.
+The current normal firmware locks Johnny to the native 640x480 left scene
+position (`x=0..639`) and persists one mutually exclusive right-sidebar mode:
+Off, combined Clock/weather, or Reviewer. Off is the factory default. The
+earlier general Left/Center/Right layout proposal remains deferred, as does
+optional nearest-neighbor 1.25x stretch mode.
 
 ## Project Structure
 
@@ -97,54 +97,53 @@ esp32/
         ├── jcrez/               # mmap resource access, LZW/RLE decompression, PAL/BMP/SCR/TTM/ADS parsers
         ├── jcgfx/               # palette LUT, indexed blitter, clipping, zones, 8×8 font, menu renderer
         ├── jcengine/            # TTM interpreter, ADS scheduler, story/island/walk-A*, force APIs, scene_names.c
-        └── jcnet/                # (Phase 6+) Wi-Fi, SNTP; future weather and local web management
+        └── jcnet/                # Wi-Fi setup, SNTP, weather, authenticated local web/API
     └── sdkconfig.defaults       # OPI PSRAM @120 MHz, cache/performance flags per Waveshare notes
 ```
 
-## Touch UI (overlay — playback continues behind it)
+## Controls and deferred touch UI
 
-- **Tap anywhere** → control dock/settings panel slides up; animation keeps running
-  underneath (mirrors the desktop screensaver behavior).
-- **Sky:** Automatic (clock) / Day / Night.
-- **Holiday:** Off / Automatic (calendar) / Halloween / St. Patrick / Christmas / New Year.
-- **Layout:** Left bar / Center / Right bar. **Clock** and **Weather** toggles independently
-  control the selected side bar. Center always hides both while retaining their saved states;
-  the default is Right bar with both enabled. All three choices persist in NVS.
-- **Clock:** HH:MM picker; smart boot prompt only when no trusted time source exists
-  (no Wi-Fi configured and NVS time invalid), otherwise instant start; manual re-set via
-  menu button. With Wi-Fi configured, SNTP sets the clock automatically after sync.
-- **Scene browser, 3 levels:** Category → Event → Subscene/TTM, generated from the scene
-  catalog (below); selecting plays immediately. Level 3 lists subscenes dynamically from
-  parsed TTM chunk metadata.
-- All menus operable by touch alone; hand-rolled renderer on top of the indexed blitter.
-  No LVGL — saves ~300 KB flash and avoids a second render pipeline.
+The implemented authenticated webpage controls Normal/Review playback, all 63
+scenes, Sky, Special Days and the mutually exclusive Off/Clock/Reviewer sidebar.
+Reviewer touch hitboxes are enabled only while that sidebar is visible. A full
+touch settings overlay, Left/Center/Right layout picker, manual clock picker and
+three-level sub-TTM browser remain deferred. Any future overlay must keep
+playback running and reuse the hand-rolled renderer rather than adding LVGL.
 
 ## Connectivity, Time & Weather
 
-**Wi-Fi (Phase 6):**
+**Wi-Fi and time (implemented):**
 
-- Provisioning: first-boot softAP portal (connect from phone, enter SSID/password) with a
-  serial-console fallback; credentials stored in NVS.
-- Duty cycle: radio powers on briefly for an SNTP sync at boot and then every 12 h;
-  disabled between syncs to keep PSRAM bandwidth clear for the RGB panel. The future web
-  interface overrides this policy while enabled and keeps Wi-Fi active for local access.
+- Provisioning: first-boot `Johnny-XXXX` softAP portal at `192.168.4.1`; the
+  displayed numeric password protects setup and credentials are stored in NVS.
+- The radio remains available for the authenticated LAN control page, SNTP and
+  background weather refresh. Network work is bounded and kept outside playback.
 - Timezone stored in NVS as a POSIX TZ string; DST handled by the libc time layer.
-- Fallback chain: SNTP → NVS last-known time + offset estimate → smart boot clock prompt
-  → manual set via touch UI.
+- SNTP provides wall-clock time after Wi-Fi connection. Unsynchronized states are
+  explicit and do not alter the native scene layout.
 
-**Side-bar weather (future — Phase 7 backlog):**
+**Side-bar weather (implemented focused slice — 2026-09-04):**
 
 - Source: Open-Meteo (`api.open-meteo.com`) — free for non-commercial use, no API key.
   Alternative providers kept behind one small client interface so they are swappable.
-- Current conditions (+ optionally today's forecast) fetched every 30–60 min during brief
-  Wi-Fi windows; HTTPS via mbedtls (~50 KB transient heap).
-- Display: the selected 160×480 side bar shows a condition icon, current temperature, today's
-  high/low, last-update time, and a subdued stale/unavailable status when current data cannot
-  be fetched. The Weather toggle controls this content independently of the Clock toggle.
+- Current conditions and today's high/low are fetched about every 45 minutes by
+  a background HTTPS task; playback never waits for a weather request.
+- Display: the selected 160x480 side bar shows a colour-layered 32x32 pixel
+  condition icon at exact 2x scale, followed by current temperature, today's
+  high/low, the `DATA FROM METEO` source label, last-successful local update
+  time and a subdued stale/unavailable status. The
+  embedded masks are adapted from Dhole's CC BY-SA 4.0
+  [`weather-pixel-icons`](https://github.com/Dhole/weather-pixel-icons): cloud
+  layers use sidebar blue, sun and lightning use yellow, and moon,
+  rain/snow and highlights use white. Unknown and fog codes use a neutral cloud
+  fallback. No weather artwork is fetched at runtime.
+- The embedded control and setup pages use the same Castaway Lookout SVG source
+  as the Windows application icon for their browser favicon.
 - The side bar and native scene placement do not change when weather becomes stale or
   unavailable; Center continues to hide all side-bar content.
-- Location: latitude/longitude entered during provisioning, editable in the menu, stored
-  in NVS.
+- Location: authenticated three-result city/postal-code search uses Open-Meteo
+  geocoding. The chosen display name, coordinates and timezone are stored in
+  NVS, along with the last successful forecast for stale-data fallback.
 
 ## Scene Catalog Integration (johnny-castaway.com)
 
@@ -197,12 +196,43 @@ correctly on device. The menu browser doubles as test navigation.
   Keep HTTP-to-display mutations behind a bounded acknowledged FreeRTOS queue.
 - Use Stockholm CET/CEST for SNTP-backed Automatic Sky and Special Days. Invalid
   time falls back to day with no automatic holiday.
-- Layout, clock/weather, timezone selection, CRT and touch-menu parity remain
-  later slices rather than being coupled to this controller.
+- The Clock/weather/Reviewer sidebar and location/timezone selection are now
+  implemented. General layout, CRT and touch-menu parity remain later slices.
+
+## Runtime review, bug logging and story blocks — implemented 2026-09-04
+
+The normal web firmware has a persisted Normal/Review playback choice.
+Review mode walks the complete 63-scene catalog in order and repeats each event
+until Looks OK, Bug, Previous or Next is selected. Bug captures update a
+separate bounded `jc_bug` NVS record for that scene and never modify the closed
+`jc_review` ledger. The authenticated webpage exposes the bug log with
+copy-one, Copy All, resolve and confirmed Clear All actions. Each sanitized
+record includes the complete scene identity, frame, playback and sky/holiday
+settings, effective island state, firmware identity, catalog fingerprint and a
+valid local timestamp or uptime.
+
+Sky gains a persisted Cycle choice without changing the existing Automatic,
+Day or Night meanings. Cycle starts with ten completed scene transitions in
+daylight, then ten at night, and repeats; replay and rewind do not advance it and
+a reboot begins a new daytime block. The same block owns the variable island
+anchor. A new legal anchor is chosen only at a block boundary and is limited to
+64 pixels horizontally and 32 vertically from the previous anchor. Authored
+fixed-left placement remains authoritative.
+
+The physical 160-pixel reviewer sidebar has its own persisted authenticated web
+switch, independent of Normal/Review playback. Normal firmware defaults it Off,
+clears the reserved area to black and disables reviewer touch hitboxes. The
+unprovisioned Wi-Fi setup sidebar and compile-time REVIEW-only diagnostics ignore
+that switch and remain visible.
+
+Implementation and closure evidence is tracked in numbered `../TODO.md` entries.
+Each records Added, Status, Changes, Validation, Remaining gate and Closed using
+Stockholm `YYYY-MM-DD` dates. Automated, flash/serial and direct-panel gates stay
+distinct, and the overall leg closes only after physical acceptance.
 
 ## Phases
 
-### Current ordered execution plan — 2026-09-03
+### Current ordered execution plan — 2026-09-04
 
 The detailed defect and repair record for complete catalog playback is
 [`ALL_SCENES_FIDELITY.md`](ALL_SCENES_FIDELITY.md). Keep
@@ -224,34 +254,32 @@ semantics.
    tests, uncached Go tests, normal and REVIEW-only builds, and strict headless
    QEMU pass. Graphical capture remains in the complete release gate rather than
    being treated as physical proof.
-3. **Implemented — randomized playback and local web control.** Normal firmware
-   now shuffles every one of the 63 scenes once per cycle, applies persisted
-   Sky/Special Days settings immediately and serves the authenticated local UI
-   and JSON API. The ESP32 was fully erased and the normal image flashed on
-   2026-09-03; serial proved clean boot, setup AP startup and multiple shuffled
-   scene transitions. Wi-Fi provisioning, direct API/reboot persistence checks
-   and all visual gates remain pending. QEMU was excluded from this run.
-4. **Close the physical performance gate.** Flash and hard-reset the rebuilt
-   image, verify serial boot, and directly confirm smooth wave/cloud batching,
-   transitions, Pause/Play and exact Back 10 Frames. Serial timing or framebuffer
-   hashes alone do not close this gate.
-5. **Complete remaining Phase 3 interpreter parity.** Implement random-range
+3. **Implemented — randomized playback, settings and local web control.** Normal
+   firmware shuffles all 63 scenes, applies persisted Sky/Special Days/sidebar
+   settings, serves the authenticated UI/API, stores review/bug state and keeps
+   a ten-Day/ten-Night block sequence with stable island anchors.
+4. **Implemented — Clock/weather sidebar and release flasher.** The 160-pixel
+   sidebar provides SNTP time/date, city weather, colour pixel icons, stale state
+   and local update time. RC4 includes a one-page guide and double-click Windows
+   flasher that generates private `jcdata.bin` locally and positively identifies
+   the supported N16R8 board before writing.
+5. **Close the current physical acceptance gate.** Directly confirm sidebar
+   layout/colours, smooth playback, authenticated switching, persistence,
+   weather staleness, review actions, Day/Night blocks and holidays. Serial,
+   HTTP, framebuffer and flash evidence do not close this gate.
+6. **Complete remaining Phase 3 interpreter parity.** Implement random-range
    `TIMER`, root/current tag separation, clip and missing draw primitives,
    scoped saved zones, local/global `IF_LASTPLAYED`, stable semantic z-order and
    the remaining story/walk/pathfinding lifecycle. Add focused regressions before
    another full physical pass.
-6. **Run an engine-wide regression pass.** Exercise all 63 catalog identities,
+7. **Run an engine-wide regression pass.** Exercise all 63 catalog identities,
    every SCR class and representative island variants in fixtures and QEMU, then
    repeat direct panel checkpoints for every behavior touched by Phase 3 parity.
    Require bounded heap/draw usage and no watchdog, panic or restart loop.
-7. **Implement remaining Phase 4 touch controls and catalog browsing.** Add the persisted
-   Special Days selector first, followed by the touch overlay, Sky controls,
-   layout and independent Clock/Weather toggles, manual clock flow and the
-   generated three-level scene browser. Playback must continue behind the menu.
-8. **Proceed with remaining Phase 5-9 slices after the engine gate is closed.** Complete
-   long-run integration/monitoring, then Wi-Fi/SNTP, weather, Soft CRT and the
-   local authenticated web interface in that order, with a physical 30 fps gate
-   after each feature that affects rendering, memory or radio activity.
+8. **Implement only the remaining deferred UI slices after the engine gate.**
+   Add the touch settings overlay, general layout picker, manual clock flow,
+   sub-TTM browser and optional Soft CRT only with focused physical performance
+   gates.
 
 #### Phase 3 completion criteria
 
@@ -340,7 +368,10 @@ with verified firmware and unchanged `jcdata`, hard-reset, and reached Scene
 1/63. Physical serial observed the authored event complete and restart from
 frame 1 twice with stable island state; direct panel acceptance is still open.
 
-### Current implementation status — 2026-09-03
+### Implementation history through 2026-09-03
+
+This section preserves the review/runtime history. The current RC4 state and
+remaining gates are the ordered plan above.
 
 Phases 0-2 and the first bounded part of Phase 3 are operational. The physical
 firmware repeatedly plays one complete `ACTIVITY.ADS` tag-1 event at native
@@ -386,10 +417,11 @@ emitted an empty final shortlist and reported `REVIEW-ONLY: ALL RESOLVED`.
 The review ledger is reconciled and the immediate pickup advances to the final
 smoothness and deterministic rewind/z-order gates.
 
-Full interpreter parity, rendered rewind/z-order coverage, the final smoothness
-gate, complete story/walk/pathfinding behavior and the Phase 4-9 user features
-remain open. Their execution order is defined above and their individual
-findings are tracked in `ALL_SCENES_FIDELITY.md`.
+Since this checkpoint, randomized Normal/Review playback, persistent web
+controls and bug log, Sky/Special Days/Cycle settings, Wi-Fi/SNTP, weather and
+Off/Clock/Reviewer sidebars have been implemented. Full interpreter parity,
+touch-menu/layout parity, optional Soft CRT and the current physical acceptance
+gate remain open; `ALL_SCENES_FIDELITY.md` carries the exact items.
 
 ### Windows screensaver reuse by phase
 
@@ -418,12 +450,12 @@ code, or desktop GLSL shaders. These are platform-specific or outside the ESP32 
 | 1 | `jcdata` partition, `make_jcdata.py`, mmap access, LZW/RLE port, parsers | **MD5 gate:** all decompressed resources hash-match the desktop reference before any further work |
 | 2 | Palette LUT, blitter, clipping, zones, three-position native composite, 160×480 side-bar surface, 8×8 font | Johnny's 640×480 region is pixel-identical to desktop dumps at `x=160` (Left bar), `x=80` (Center), and `x=0` (Right bar); no scaling, cropping, or side-bar overlap |
 | 3 | TTM/ADS/story/island/walk ports, NVS persistence, force APIs, scene-name logging | Serial log shows correct names during full-story run |
-| 4 | Menu overlay, Sky/Holiday pickers, 3-level browser, clock picker, layout preset and independent Clock/Weather toggles | Every menu is fully navigable by touch; playback continues behind open menus; layout and both toggles survive reboot; Center hides side-bar content without clearing its saved states |
+| 4 | Persisted web Sky/Special Days/sidebar controls implemented; touch overlay, layout picker, clock picker and 3-level browser deferred | Implemented controls survive reboot; future touch menus remain fully navigable while playback continues |
 | 5 | Integration: 10 Hz logic / 30 fps render loop, watchdog, heap monitor, INTRO.SCR boot flow | **QA gate:** all catalog events verified |
-| 6 | Wi-Fi provisioning (softAP + serial fallback), SNTP sync, timezone, NVS credential storage, side-bar clock/date | When enabled on either side, the clock self-sets after reboot with configured Wi-Fi; Center hides it while retaining the toggle; panel shows no drift or layout movement during sync bursts |
-| 7 | *(future)* Side-bar weather via Open-Meteo: client interface, condition/temperature/high-low/update rendering, independent toggle, staleness handling | Weather works alone and with the clock on either side; stale/unavailable data shows status without changing layout; Center hides it while retaining the toggle; fetches cause no visible playback impact |
+| 6 | Wi-Fi softAP provisioning, SNTP, NVS credentials and authenticated LAN control implemented | Clock self-sets after reboot; setup and authenticated API behavior remain bounded and local |
+| 7 | Open-Meteo weather, colour icons, temperature/high-low/update rendering and staleness handling implemented in combined Clock mode | Stale/unavailable data keeps layout stable; fetches cause no visible playback impact |
 | 8 | *(future)* Optional Soft CRT composition pass and persisted Off/Soft setting | Soft reduces harsh pixel edges without filtering the side bar or touch UI; Off remains pixel-identical; both modes sustain 30 fps on device and survive reboot |
-| 9 | *(future)* Local webpage and JSON API, common timezone selector, mirrored settings, scene browser/control, password claiming, persistent login, mDNS, and web enable/disable control | Device information is accurate; touch and web changes remain synchronized and survive reboot; scene selection works; unauthenticated or malformed changes are rejected; login/logout/reset behave correctly; web activity stays within flash/heap budgets and sustains 30 fps without panel drift |
+| 9 | Authenticated local webpage/API, password claiming, mDNS, scene control, settings and bug log implemented; web-disable/touch mirroring deferred | Unauthenticated or malformed changes are rejected; current physical switching/persistence gate remains open |
 
 ## Risks & Mitigations
 
@@ -433,9 +465,9 @@ code, or desktop GLSL shaders. These are platform-specific or outside the ESP32 
 | LZW port correctness | Phase 1 MD5 gate blocks everything until clean |
 | Flash/PSRAM share SPI1 bandwidth | Read-only mmap after boot; no flash writes during playback (NVS writes only at scene/day changes) |
 | Wi-Fi/web traffic competes with RGB panel for memory and bandwidth | Use bounded HTTP connections, small compressed assets, rate-limited status polling, and lower-priority network work; retain the short duty cycle when web access is disabled and verify stable 30 fps on device |
-| Weather provider unavailable/changed (future) | Single small client interface isolates the API; the side bar retains its layout and reports stale/unavailable data without disturbing playback |
+| Weather provider unavailable/changed | Single small client interface isolates the API; the side bar retains its layout and reports stale/unavailable data without disturbing playback |
 | Soft CRT pass reduces render throughput (future) | Keep the filter single-pass and RGB565-native, measure it on device, and retain Off as the guaranteed pixel-perfect fallback |
-| First-visitor web claiming is exposed on an untrusted LAN (future) | Document trusted-LAN-only use, allow web access to be disabled physically, and provide a touch-menu password reset without exposing stored credentials |
+| First-visitor web claiming is exposed on an untrusted LAN | Document trusted-LAN-only use; keep stored credentials hidden; physical disable/reset controls remain deferred |
 | Clock lost on power cycle | SNTP recovery when Wi-Fi is configured; else NVS-persisted story-day + smart clock prompt |
 | Catalog→TTM mapping gaps | Unmappable events stay checklist-only; desktop cross-reference resolves disputes |
 
@@ -443,6 +475,6 @@ code, or desktop GLSL shaders. These are platform-specific or outside the ESP32 
 
 Audio output (no board hardware) · SD-card data path · advanced CRT effects (curvature,
 bloom, RGB shadow masks, or multi-pass shaders) · screenshots · Windows screensaver
-integration · Bluetooth/BLE features · OTA updates. Wi-Fi is in scope only for NTP sync
-(Phase 6), the future side-bar weather feature (Phase 7), and the future local web interface
-(Phase 9).
+integration · Bluetooth/BLE features · OTA updates. Wi-Fi, NTP, the weather
+sidebar and authenticated local web interface are implemented; public-internet
+exposure is explicitly unsupported.

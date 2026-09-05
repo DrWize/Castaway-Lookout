@@ -6,6 +6,7 @@
 #include <time.h>
 
 #include "esp_chip_info.h"
+#include "esp_app_desc.h"
 #include "esp_check.h"
 #include "esp_flash.h"
 #include "esp_heap_caps.h"
@@ -133,6 +134,12 @@ struct ttm_runtime {
     jccontrol_holiday_mode_t holiday_mode;
     uint8_t story_day;
     int32_t story_date_key;
+    uint8_t cycle_position;
+    uint32_t cycle_block;
+    bool block_anchor_valid;
+    bool block_anchor_refresh;
+    int16_t block_anchor_x;
+    int16_t block_anchor_y;
     jcrez_bitmap_t island_bitmap;
     jcrez_bitmap_t raft_bitmap;
     jcrez_bitmap_t holiday_bitmap;
@@ -235,6 +242,8 @@ typedef struct {
     bool review_complete;
 #if !CONFIG_JOHNNY_REVIEW_ONLY
     jccontrol_shuffle_t shuffle;
+    jccontrol_playback_mode_t playback_mode;
+    jccontrol_sidebar_mode_t sidebar_mode;
 #endif
 #if CONFIG_JOHNNY_REVIEW_ONLY
     uint64_t review_pass_pending;
@@ -398,6 +407,52 @@ static void select_ttm_origin(const jcengine_island_state_t *island,
     }
 }
 
+static jcengine_sky_mode_t effective_sky_mode(const ttm_runtime_t *runtime)
+{
+    if (runtime->sky_mode != JCENGINE_SKY_CYCLE) return runtime->sky_mode;
+    return (runtime->cycle_block & 1U) == 0 ? JCENGINE_SKY_DAY
+                                            : JCENGINE_SKY_NIGHT;
+}
+
+static int16_t clamp_island_step(int16_t candidate, int16_t previous,
+                                 int16_t limit)
+{
+    if (candidate < previous - limit) return previous - limit;
+    if (candidate > previous + limit) return previous + limit;
+    return candidate;
+}
+
+static void apply_block_island_anchor(
+    ttm_runtime_t *runtime, const jcengine_story_scene_t *scene)
+{
+    if (!runtime->island.active ||
+        (scene->flags & JCENGINE_STORY_VARPOS_OK) == 0) {
+        return;
+    }
+    if (!runtime->block_anchor_valid) {
+        runtime->block_anchor_x = runtime->island.offset_x;
+        runtime->block_anchor_y = runtime->island.offset_y;
+        runtime->block_anchor_valid = true;
+        runtime->block_anchor_refresh = false;
+    } else if (runtime->block_anchor_refresh) {
+        runtime->block_anchor_x = clamp_island_step(
+            runtime->island.offset_x, runtime->block_anchor_x, 64);
+        runtime->block_anchor_y = clamp_island_step(
+            runtime->island.offset_y, runtime->block_anchor_y, 32);
+        runtime->block_anchor_refresh = false;
+    }
+    runtime->island.offset_x = runtime->block_anchor_x;
+    runtime->island.offset_y = runtime->block_anchor_y;
+}
+
+static void advance_story_block(ttm_runtime_t *runtime)
+{
+    if (++runtime->cycle_position < 10) return;
+    runtime->cycle_position = 0;
+    ++runtime->cycle_block;
+    runtime->block_anchor_refresh = true;
+}
+
 static esp_err_t initialize_runtime_island(
     ttm_runtime_t *runtime, const jcengine_story_scene_t *scene)
 {
@@ -407,7 +462,9 @@ static esp_err_t initialize_runtime_island(
         scene->ads_name, scene->ads_tag,
         runtime->story_day >= 1 ? runtime->story_day : 1);
     jcengine_island_initialize(&runtime->island, scene, runtime->story_day,
-                               &runtime->local_time, runtime->sky_mode, seed);
+                               &runtime->local_time,
+                               effective_sky_mode(runtime), seed);
+    apply_block_island_anchor(runtime, scene);
     if ((scene->flags & JCENGINE_STORY_HOLIDAY_NOK) != 0 ||
         runtime->holiday_mode == JCCONTROL_HOLIDAY_OFF) {
         runtime->island.holiday_id = 0;
@@ -455,6 +512,9 @@ static esp_err_t initialize_runtime_island(
 
 static bool runtime_night(const ttm_runtime_t *runtime)
 {
+    if (runtime->sky_mode == JCENGINE_SKY_CYCLE) {
+        return (runtime->cycle_block & 1U) != 0;
+    }
     if (runtime->sky_mode == JCENGINE_SKY_DAY) return false;
     if (runtime->sky_mode == JCENGINE_SKY_NIGHT) return true;
     return runtime->local_time.valid &&
@@ -876,14 +936,55 @@ static esp_err_t verify_web_control_foundation(void)
         ESP_ERR_INVALID_RESPONSE, TAG, "shuffle boundary repeated a scene");
     jcengine_sky_mode_t sky = JCENGINE_SKY_AUTOMATIC;
     jccontrol_holiday_mode_t holiday = JCCONTROL_HOLIDAY_OFF;
+    jccontrol_playback_mode_t playback_mode = JCCONTROL_PLAYBACK_NORMAL;
     ESP_RETURN_ON_FALSE(
         jccontrol_parse_sky("night", &sky) &&
             sky == JCENGINE_SKY_NIGHT &&
+            jccontrol_parse_sky("cycle", &sky) &&
+            sky == JCENGINE_SKY_CYCLE &&
             jccontrol_parse_holiday("new_year", &holiday) &&
             holiday == JCCONTROL_HOLIDAY_NEW_YEAR &&
+            jccontrol_parse_playback_mode("review", &playback_mode) &&
+            playback_mode == JCCONTROL_PLAYBACK_REVIEW &&
             !jccontrol_parse_sky("invalid", &sky) &&
-            !jccontrol_parse_holiday("easter", &holiday),
+            !jccontrol_parse_holiday("easter", &holiday) &&
+            !jccontrol_parse_playback_mode("invalid", &playback_mode),
         ESP_ERR_INVALID_RESPONSE, TAG, "web setting validation changed");
+
+    ttm_runtime_t *block = heap_caps_calloc(
+        1, sizeof(*block), MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    ESP_RETURN_ON_FALSE(block != NULL, ESP_ERR_NO_MEM, TAG,
+                        "allocate story-block fixture");
+    block->sky_mode = JCENGINE_SKY_CYCLE;
+    ESP_RETURN_ON_FALSE(!runtime_night(block), ESP_ERR_INVALID_RESPONSE, TAG,
+                        "Cycle did not start in Day");
+    for (size_t index = 0; index < 10; ++index) advance_story_block(block);
+    ESP_RETURN_ON_FALSE(block->cycle_position == 0 && block->cycle_block == 1 &&
+                            runtime_night(block),
+                        ESP_ERR_INVALID_RESPONSE, TAG,
+                        "Cycle did not enter Night after ten scenes");
+    for (size_t index = 0; index < 10; ++index) advance_story_block(block);
+    ESP_RETURN_ON_FALSE(block->cycle_position == 0 && block->cycle_block == 2 &&
+                            !runtime_night(block),
+                        ESP_ERR_INVALID_RESPONSE, TAG,
+                        "Cycle did not return to Day after twenty scenes");
+
+    jcengine_story_scene_t variable = {
+        .flags = JCENGINE_STORY_ISLAND | JCENGINE_STORY_VARPOS_OK,
+    };
+    block->island.active = true;
+    block->island.offset_x = -200;
+    block->island.offset_y = -40;
+    apply_block_island_anchor(block, &variable);
+    block->block_anchor_refresh = true;
+    block->island.offset_x = 20;
+    block->island.offset_y = 84;
+    apply_block_island_anchor(block, &variable);
+    ESP_RETURN_ON_FALSE(block->island.offset_x == -136 &&
+                            block->island.offset_y == -8,
+                        ESP_ERR_INVALID_RESPONSE, TAG,
+                        "block island movement bounds changed");
+    heap_caps_free(block);
     return ESP_OK;
 }
 
@@ -2380,6 +2481,52 @@ static void draw_live_story_sidebar(uint16_t *framebuffer,
                                  network.setup_password);
         return;
     }
+    if (state->sidebar_mode == JCCONTROL_SIDEBAR_OFF) {
+        jcgfx_clear_sidebar(framebuffer, JCBOARD_WIDTH, JCBOARD_HEIGHT);
+        return;
+    }
+    if (state->sidebar_mode == JCCONTROL_SIDEBAR_CLOCK) {
+        jcnet_weather_status_t weather = {0};
+        jcnet_weather_status(&weather);
+        time_t now = time(NULL);
+        time_t local_epoch = now + weather.utc_offset_seconds;
+        struct tm local = {0};
+        if (weather.available) {
+            gmtime_r(&local_epoch, &local);
+        } else {
+            localtime_r(&now, &local);
+        }
+        struct tm weather_updated = {0};
+        bool weather_updated_valid = false;
+        if (weather.updated_at > 0) {
+            time_t weather_updated_epoch =
+                (time_t)weather.updated_at + weather.utc_offset_seconds;
+            weather_updated_valid =
+                gmtime_r(&weather_updated_epoch, &weather_updated) != NULL;
+        }
+        jcgfx_clock_weather_status_t clock = {
+            .time_valid = network.time_synced && now > 1704067200,
+            .weather_available = weather.available,
+            .weather_stale = weather.stale,
+            .weather_updated_valid = weather_updated_valid,
+            .year = (uint16_t)(local.tm_year + 1900),
+            .month = (uint8_t)(local.tm_mon + 1),
+            .day = (uint8_t)local.tm_mday,
+            .weekday = (uint8_t)local.tm_wday,
+            .hour = (uint8_t)local.tm_hour,
+            .minute = (uint8_t)local.tm_min,
+            .weather_updated_hour = (uint8_t)weather_updated.tm_hour,
+            .weather_updated_minute = (uint8_t)weather_updated.tm_min,
+            .temperature_tenths = weather.temperature_tenths,
+            .high_tenths = weather.high_tenths,
+            .low_tenths = weather.low_tenths,
+            .weather_code = weather.weather_code,
+            .location = weather.configured ? weather.location : "SET LOCATION",
+        };
+        jcgfx_draw_clock_weather_sidebar(framebuffer, JCBOARD_WIDTH,
+                                         JCBOARD_HEIGHT, &clock);
+        return;
+    }
     if (state->review_complete) {
         jcgfx_draw_validation_review_summary(
             framebuffer, JCBOARD_WIDTH, JCBOARD_HEIGHT, state->reviews,
@@ -2418,10 +2565,25 @@ static void publish_live_status(const ttm_runtime_t *runtime,
         .settings = {
             .sky = runtime->sky_mode,
             .holiday = runtime->holiday_mode,
+            .playback_mode = state->playback_mode,
+            .sidebar_mode = state->sidebar_mode,
         },
         .effective_holiday = runtime->island.holiday_id,
-        .effective_night = runtime->island.night,
+        .effective_night = runtime_night(runtime),
+        .cycle_position = runtime->cycle_position,
+        .cycle_block = runtime->cycle_block,
+        .story_day = runtime->story_day,
+        .island_x = runtime->island.offset_x,
+        .island_y = runtime->island.offset_y,
+        .low_tide = runtime->island.low_tide,
+        .raft_stage = runtime->island.raft_stage,
+        .catalog_fingerprint = live_story_catalog_fingerprint(),
     };
+    const esp_app_desc_t *app = esp_app_get_description();
+    if (app != NULL) {
+        snprintf(snapshot.firmware_version, sizeof(snapshot.firmware_version),
+                 "%s", app->version);
+    }
     jccontrol_publish(&snapshot);
 }
 
@@ -2437,18 +2599,45 @@ static bool apply_live_control_commands(
             jccontrol_settings_t settings = {
                 .sky = runtime->sky_mode,
                 .holiday = runtime->holiday_mode,
+                .playback_mode = state->playback_mode,
+                .sidebar_mode = state->sidebar_mode,
             };
             if (command.has_sky) settings.sky = command.settings.sky;
             if (command.has_holiday) {
                 settings.holiday = command.settings.holiday;
             }
+            if (command.has_playback_mode) {
+                settings.playback_mode = command.settings.playback_mode;
+            }
+            if (command.has_sidebar_mode) {
+                settings.sidebar_mode = command.settings.sidebar_mode;
+            }
             if (!jccontrol_settings_valid(&settings)) {
                 err = ESP_ERR_INVALID_ARG;
             } else {
+                jccontrol_playback_mode_t previous_mode = state->playback_mode;
+                jcengine_sky_mode_t previous_sky = runtime->sky_mode;
                 runtime->sky_mode = settings.sky;
                 runtime->holiday_mode = settings.holiday;
+                state->playback_mode = settings.playback_mode;
+                state->sidebar_mode = settings.sidebar_mode;
+                if (runtime->sky_mode == JCENGINE_SKY_CYCLE &&
+                    previous_sky != JCENGINE_SKY_CYCLE) {
+                    runtime->cycle_position = 0;
+                    runtime->cycle_block = 0;
+                    runtime->block_anchor_refresh = true;
+                }
                 runtime->local_time = current_local_time();
                 err = refresh_runtime_theme(runtime, state->scene);
+                if (err == ESP_OK && previous_mode != state->playback_mode) {
+                    if (state->playback_mode == JCCONTROL_PLAYBACK_REVIEW) {
+                        err = begin_live_story_event(runtime, resources,
+                                                     scheduler, state, 0);
+                    } else {
+                        err = begin_random_scene_or_continue(
+                            runtime, resources, scheduler, state);
+                    }
+                }
                 if (err == ESP_OK) err = jccontrol_store_settings(&settings);
                 if (err == ESP_OK) changed = true;
             }
@@ -2457,9 +2646,49 @@ static bool apply_live_control_commands(
                                          command.scene_index);
             if (err == ESP_OK) changed = true;
         } else if (command.type == JCCONTROL_COMMAND_RANDOM) {
+            state->playback_mode = JCCONTROL_PLAYBACK_NORMAL;
+            jccontrol_settings_t settings = {
+                .sky = runtime->sky_mode,
+                .holiday = runtime->holiday_mode,
+                .playback_mode = state->playback_mode,
+                .sidebar_mode = state->sidebar_mode,
+            };
             err = begin_random_scene_or_continue(runtime, resources, scheduler,
                                                   state);
+            if (err == ESP_OK) err = jccontrol_store_settings(&settings);
             if (err == ESP_OK) changed = true;
+        } else if (command.type == JCCONTROL_COMMAND_REVIEW_OK ||
+                   command.type == JCCONTROL_COMMAND_REVIEW_BUG) {
+            if (state->playback_mode != JCCONTROL_PLAYBACK_REVIEW) {
+                err = ESP_ERR_INVALID_STATE;
+            } else {
+                if (command.type == JCCONTROL_COMMAND_REVIEW_BUG) {
+                    publish_live_status(runtime, state);
+                    jccontrol_snapshot_t snapshot = {0};
+                    jccontrol_snapshot(&snapshot);
+                    err = jccontrol_bug_capture(&snapshot);
+                }
+                if (err == ESP_OK) {
+                    advance_story_block(runtime);
+                    err = begin_live_story_event(
+                        runtime, resources, scheduler, state,
+                        (state->slice_index + 1) % LIVE_STORY_COUNT);
+                }
+                if (err == ESP_OK) changed = true;
+            }
+        } else if (command.type == JCCONTROL_COMMAND_REVIEW_PREVIOUS ||
+                   command.type == JCCONTROL_COMMAND_REVIEW_NEXT) {
+            if (state->playback_mode != JCCONTROL_PLAYBACK_REVIEW) {
+                err = ESP_ERR_INVALID_STATE;
+            } else {
+                int direction = command.type == JCCONTROL_COMMAND_REVIEW_PREVIOUS
+                                    ? -1
+                                    : 1;
+                err = begin_live_story_event(
+                    runtime, resources, scheduler, state,
+                    wrap_live_story_index(state->slice_index, direction));
+                if (err == ESP_OK) changed = true;
+            }
         } else {
             err = ESP_ERR_INVALID_ARG;
         }
@@ -2682,6 +2911,9 @@ static void johnny_runtime_task(void *context)
     ESP_ERROR_CHECK(verify_island_lifecycle());
     ESP_LOGI(TAG,
              "VERIFY: deterministic island, clock, flag, animation and story-day fixtures PASS");
+    ESP_ERROR_CHECK(jcgfx_verify_weather_icon_fixtures());
+    ESP_LOGI(TAG,
+             "VERIFY: colour weather icon mapping, layers and 2x RGB565 fixtures PASS");
     jcrez_ttm_t ttm = {0};
     ESP_ERROR_CHECK(jcrez_load_ttm(&archive, "MJAMBWLK.TTM", &ttm));
     ESP_LOGI(TAG,
@@ -3169,6 +3401,10 @@ static void johnny_runtime_task(void *context)
         const jcengine_story_scene_t *probe_scene =
             find_story_scene_by_identity(fixture->ads_name, fixture->ads_tag);
         ESP_ERROR_CHECK(probe_scene == NULL ? ESP_ERR_NOT_FOUND : ESP_OK);
+        /* Per-event framebuffer fixtures remain independent. Story-block
+           continuity has its own deterministic gate above. */
+        activity_runtime->block_anchor_valid = false;
+        activity_runtime->block_anchor_refresh = false;
         ESP_ERROR_CHECK(start_live_story_event(
             activity_runtime, live_resources, activity_scheduler, probe_scene));
         if (strcmp(fixture->ads_name, "VISITOR.ADS") == 0 &&
@@ -3562,14 +3798,27 @@ static void johnny_runtime_task(void *context)
 #else
     jccontrol_settings_t settings = {0};
     ESP_ERROR_CHECK(jccontrol_load_settings(&settings));
+    ESP_LOGI(TAG, "SETTINGS: playback=%s sidebar=%s sky=%s holiday=%s",
+             jccontrol_playback_mode_name(settings.playback_mode),
+             jccontrol_sidebar_mode_name(settings.sidebar_mode),
+             jccontrol_sky_name(settings.sky),
+             jccontrol_holiday_name(settings.holiday));
     activity_runtime->sky_mode = settings.sky;
     activity_runtime->holiday_mode = settings.holiday;
+    live_story.playback_mode = settings.playback_mode;
+    live_story.sidebar_mode = settings.sidebar_mode;
     live_story.shuffle.last_scene = -1;
     jccontrol_shuffle_reset(&live_story.shuffle, esp_random());
     live_story.review_complete = false;
     live_story.paused = false;
-    ESP_ERROR_CHECK(begin_random_scene_or_continue(
-        activity_runtime, live_resources, activity_scheduler, &live_story));
+    if (live_story.playback_mode == JCCONTROL_PLAYBACK_REVIEW) {
+        ESP_ERROR_CHECK(begin_live_story_event(
+            activity_runtime, live_resources, activity_scheduler, &live_story,
+            0));
+    } else {
+        ESP_ERROR_CHECK(begin_random_scene_or_continue(
+            activity_runtime, live_resources, activity_scheduler, &live_story));
+    }
 #endif
 #if CONFIG_JOHNNY_QEMU && !CONFIG_JOHNNY_QEMU_HEADLESS
 #if CONFIG_JOHNNY_REVIEW_ONLY
@@ -3705,9 +3954,22 @@ static void johnny_runtime_task(void *context)
                              (unsigned)(failed_index + 1),
                              (unsigned)LIVE_STORY_COUNT,
                              esp_err_to_name(tick_err));
-                    ESP_ERROR_CHECK(begin_random_scene_or_continue(
-                        activity_runtime, live_resources, activity_scheduler,
-                        &live_story));
+                    if (live_story.playback_mode ==
+                        JCCONTROL_PLAYBACK_REVIEW) {
+                        publish_live_status(activity_runtime, &live_story);
+                        jccontrol_snapshot_t snapshot = {0};
+                        jccontrol_snapshot(&snapshot);
+                        snapshot.runtime_error = tick_err;
+                        ESP_ERROR_CHECK(jccontrol_bug_capture(&snapshot));
+                        ESP_ERROR_CHECK(begin_live_story_event(
+                            activity_runtime, live_resources,
+                            activity_scheduler, &live_story,
+                            (failed_index + 1) % LIVE_STORY_COUNT));
+                    } else {
+                        ESP_ERROR_CHECK(begin_random_scene_or_continue(
+                            activity_runtime, live_resources,
+                            activity_scheduler, &live_story));
+                    }
 #endif
                     presentation_dirty = true;
                     activity_failed = true;
@@ -3749,9 +4011,22 @@ static void johnny_runtime_task(void *context)
                              (unsigned)(failed_index + 1),
                              (unsigned)LIVE_STORY_COUNT,
                              esp_err_to_name(compose_err));
-                    ESP_ERROR_CHECK(begin_random_scene_or_continue(
-                        activity_runtime, live_resources, activity_scheduler,
-                        &live_story));
+                    if (live_story.playback_mode ==
+                        JCCONTROL_PLAYBACK_REVIEW) {
+                        publish_live_status(activity_runtime, &live_story);
+                        jccontrol_snapshot_t snapshot = {0};
+                        jccontrol_snapshot(&snapshot);
+                        snapshot.runtime_error = compose_err;
+                        ESP_ERROR_CHECK(jccontrol_bug_capture(&snapshot));
+                        ESP_ERROR_CHECK(begin_live_story_event(
+                            activity_runtime, live_resources,
+                            activity_scheduler, &live_story,
+                            (failed_index + 1) % LIVE_STORY_COUNT));
+                    } else {
+                        ESP_ERROR_CHECK(begin_random_scene_or_continue(
+                            activity_runtime, live_resources,
+                            activity_scheduler, &live_story));
+                    }
 #endif
                     activity_failed = true;
                 }
@@ -3811,9 +4086,20 @@ static void johnny_runtime_task(void *context)
                     activity_runtime, live_resources, activity_scheduler,
                     &live_story, restart_index));
 #else
-                ESP_ERROR_CHECK(begin_random_scene_or_continue(
-                    activity_runtime, live_resources, activity_scheduler,
-                    &live_story));
+                if (live_story.playback_mode == JCCONTROL_PLAYBACK_REVIEW) {
+                    ESP_LOGI(TAG,
+                             "REVIEW: event=%u/%u completed; repeating until decision",
+                             (unsigned)(live_story.slice_index + 1),
+                             (unsigned)LIVE_STORY_COUNT);
+                    ESP_ERROR_CHECK(begin_live_story_event(
+                        activity_runtime, live_resources, activity_scheduler,
+                        &live_story, live_story.slice_index));
+                } else {
+                    advance_story_block(activity_runtime);
+                    ESP_ERROR_CHECK(begin_random_scene_or_continue(
+                        activity_runtime, live_resources, activity_scheduler,
+                        &live_story));
+                }
 #endif
                 presentation_dirty = true;
             }
@@ -3833,8 +4119,15 @@ static void johnny_runtime_task(void *context)
         bool touch_down = jcboard_read_touch(&board, &x, &y);
 #if !CONFIG_JOHNNY_BOARD_TEST
         if (touch_down && !touch_was_down) {
+#if CONFIG_JOHNNY_REVIEW_ONLY
             jcgfx_validation_control_t control =
                 jcgfx_validation_sidebar_hit_test(x, y);
+#else
+            jcgfx_validation_control_t control =
+                live_story.sidebar_mode == JCCONTROL_SIDEBAR_REVIEW
+                    ? jcgfx_validation_sidebar_hit_test(x, y)
+                    : JCGFX_VALIDATION_CONTROL_NONE;
+#endif
             if (control == JCGFX_VALIDATION_CONTROL_PAUSE &&
                 !live_story.review_complete) {
                 live_story.paused = !live_story.paused;
@@ -3888,9 +4181,22 @@ static void johnny_runtime_task(void *context)
                              "PLAYBACK: scene=%u rewind failed error=%s; skipping",
                              (unsigned)(failed_index + 1),
                              esp_err_to_name(replay_err));
-                    ESP_ERROR_CHECK(begin_random_scene_or_continue(
-                        activity_runtime, live_resources, activity_scheduler,
-                        &live_story));
+                    if (live_story.playback_mode ==
+                        JCCONTROL_PLAYBACK_REVIEW) {
+                        publish_live_status(activity_runtime, &live_story);
+                        jccontrol_snapshot_t snapshot = {0};
+                        jccontrol_snapshot(&snapshot);
+                        snapshot.runtime_error = replay_err;
+                        ESP_ERROR_CHECK(jccontrol_bug_capture(&snapshot));
+                        ESP_ERROR_CHECK(begin_live_story_event(
+                            activity_runtime, live_resources,
+                            activity_scheduler, &live_story,
+                            (failed_index + 1) % LIVE_STORY_COUNT));
+                    } else {
+                        ESP_ERROR_CHECK(begin_random_scene_or_continue(
+                            activity_runtime, live_resources,
+                            activity_scheduler, &live_story));
+                    }
 #endif
                     presentation_dirty = true;
                     next_presentation = xTaskGetTickCount();
@@ -3993,6 +4299,30 @@ static void johnny_runtime_task(void *context)
                     log_live_story_review_summary(&live_story);
                 }
 #endif
+                presentation_dirty = true;
+                next_presentation = xTaskGetTickCount();
+#else
+            } else if ((control == JCGFX_VALIDATION_CONTROL_OK ||
+                        control == JCGFX_VALIDATION_CONTROL_REVIEW) &&
+                       live_story.playback_mode ==
+                           JCCONTROL_PLAYBACK_REVIEW) {
+                if (control == JCGFX_VALIDATION_CONTROL_REVIEW) {
+                    publish_live_status(activity_runtime, &live_story);
+                    jccontrol_snapshot_t snapshot = {0};
+                    jccontrol_snapshot(&snapshot);
+                    ESP_ERROR_CHECK(jccontrol_bug_capture(&snapshot));
+                    ESP_LOGI(TAG,
+                             "BUG: captured scene=%u %s tag=%u frame=%" PRIu32,
+                             (unsigned)(live_story.slice_index + 1),
+                             live_story.scene->ads_name,
+                             live_story.scene->ads_tag,
+                             live_story.displayed_frame);
+                }
+                advance_story_block(activity_runtime);
+                ESP_ERROR_CHECK(begin_live_story_event(
+                    activity_runtime, live_resources, activity_scheduler,
+                    &live_story,
+                    (live_story.slice_index + 1) % LIVE_STORY_COUNT));
                 presentation_dirty = true;
                 next_presentation = xTaskGetTickCount();
 #endif

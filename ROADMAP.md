@@ -1,121 +1,56 @@
-# Johnny Castaway 2026 Roadmap
+# Castaway Lookout roadmap
 
-Updated: 2026-07-17
+Updated: 2026-09-05
 
-## Objective
+Publication status: [release readiness tracker](docs/RELEASE_READINESS_PLAN.md).
+Validation listed below is historical evidence; no tests or builds are being
+rerun during the documentation/publication pass.
 
-Ship a trustworthy source-only, native x64 release for Windows 11, then improve
-visibility, performance tuning, and visual fidelity. The supported Windows
-build has one architecture, one toolchain, one CI job, and two deliverables:
-`JohnnyCastaway.exe` and `JohnnyCastaway.scr`.
+## Current releases
 
-## Phase 0 — Native Windows 11 x64 baseline (P0)
+- [x] Windows 11 x64 RC3 is published with the desktop application,
+  screensaver, per-user installer, shared INI, verified data setup and Castaway
+  Lookout icon.
+- [x] The ESP32-S3 firmware supports all 63 catalog scenes on the Waveshare
+  ESP32-S3-Touch-LCD-7, with Wi-Fi setup, authenticated LAN control,
+  Normal/Review playback, persistent settings and Clock/weather/Reviewer
+  sidebar modes.
+- [x] RC4 has a reproducible ESP32 release ZIP and one-page flashing guide. The
+  ZIP omits copyrighted Sierra data and creates `jcdata.bin` locally from the
+  user's hash-verified originals.
 
-- [x] Remove the legacy 32-bit screensaver build, resources, workflow, artifact
-  names, and compatibility assumptions.
-- [x] Build both the desktop application and screensaver with `GOARCH=amd64`
-  and the MSYS2 MinGW64 toolchain.
-- [x] Give both deliverables amd64 Windows manifests and PE32+ resources.
-- [x] Consolidate regression testing, builds, architecture verification, and
-  artifact upload in one Windows 11 x64 workflow.
-- [ ] Confirm the native artifacts and all screensaver modes on a clean Windows
-  11 account or machine.
+## Release gates
 
-Exit criteria:
+- [x] Windows Go regression suite, native x64 application/screensaver builds,
+  architecture checks, installer build and source/data boundary checks.
+- [x] ESP32 Python/catalog tests, uncached Go tests, normal ESP-IDF build,
+  package construction, firmware checksums, private data-image equivalence,
+  positive N16R8 identification, verified release-script flash and hard reset.
+- [x] All 63 ESP32 scenes were physically reviewed and accepted in the closed
+  review ledger.
+- [ ] Complete direct-panel acceptance of the latest Clock/weather layout,
+  colour icons, update timestamp, Reviewer/Off switching, reboot persistence,
+  long-run smoothness and stale-weather presentation.
+- [ ] Test the Windows installer and screensaver lifecycle on a genuinely clean
+  Windows 11 account or machine before promoting to stable.
 
-- No legacy 32-bit build code or generated deliverables remain.
-- Both deliverables report `GOOS=windows`, `GOARCH=amd64`, and PE32+ format.
-- `/c`, `/s`, `/p HWND`, `/p:HWND`, and preview host-close behavior pass.
+## Next engineering work
 
-## Phase 1 — Release candidate verification (P0)
+1. Close the remaining ESP32 physical sidebar/control gate without inferring
+   visual success from serial, framebuffer hashes or QEMU.
+2. Finish the remaining ESP32 interpreter/lifecycle parity items listed in
+   `esp32/ALL_SCENES_FIDELITY.md`, then repeat affected deterministic and panel
+   checks.
+3. Complete the Windows CRT performance matrix on the documented resolutions
+   and at least one lower-powered GPU.
+4. Promote the verified candidates to stable only after their remaining
+   physical smoke tests pass.
 
-- [x] Run the full Go regression suite and `go vet` with the supported Windows
-  CGO toolchain.
-- [x] Confirm preview mode creates a real child window inside the Windows Screen
-  Saver preview host and exits cleanly.
-- [x] Run the all-TTM stability sweep and check for crashes, resource leaks,
-  missing-resource failures, and content-switch regressions.
-- [x] Perform a final source/data-boundary scan and verify the documented archive
-  hashes and clean-clone build instructions.
-- [ ] Require the Windows 11 x64 GitHub Actions workflow to pass and retain its
-  paired EXE and SCR artifact for release testing.
+## Deferred scope
 
-Exit criteria:
-
-- Local tests, stability sweep, screensaver QA, and x64 CI are green.
-- A clean clone can build with user-supplied data and no undocumented files.
-
-## Phase 2 — Publish the release (P0)
-
-- [ ] Merge the verified native x64 branch into `main`.
-- [ ] Publish `v2026.1.0-rc.3` with the paired native x64 EXE and SCR, per-user
-  installer, required data policy, controls, and unsigned-binary notes.
-- [ ] Test the downloadable artifacts on a clean Windows 11 account or machine.
-- [ ] Promote the candidate to `v2026.1.0` if that smoke test passes.
-
-Exit criteria:
-
-- The public repository has a reproducible, source-only stable release.
-- Installation, data setup, screensaver configuration, and known limitations
-  are clear to a new user.
-
-## Phase 3 — DrWize/Home portfolio index (P1)
-
-- [x] Inventory all DrWize projects and give each one a consistent portfolio
-  entry with status, purpose, technology, repository link, and an image where
-  appropriate.
-- [x] Keep source, releases, issues, detailed documentation, and development
-  history in each project's canonical repository.
-- [ ] Update the Johnny Castaway entry after stable with a concise Windows 11
-  x64 summary, CI/release status, and source/data-policy note.
-
-## Phase 4 — Real-hardware performance matrix (P1)
-
-- [ ] Run F9 benchmarks at 1920x1080, 3840x2160, 5120x1440, and 7680x2160.
-- [ ] Record Off, Lightweight, Fast, HDR Pop, and Lottes results with GPU, monitor,
-  scaling, fit/stretch, average FPS, and CPU submission time.
-- [ ] Verify that only the centered 4:3 viewport incurs shader cost on 32:9
-  displays.
-- [x] Fall back to Lightweight when a CRT shader cannot compile and exclude
-  unsupported modes from the live cycle and benchmark.
-- [ ] Establish conservative performance thresholds and defaults from physical
-  measurements while retaining a user override.
-
-Progress: the four pre-HDR production CRT paths held 30 FPS at a physical 3840x1080
-output on an RTX 4080, with 0.15–0.19 ms CPU submission time. The remaining
-targets and lower-powered hardware are documented in `docs/PERFORMANCE.md`.
-
-## Phase 5 — Optional CRT modes (P2)
-
-- [x] Evaluate CRT-Easymode; do not import it without an authoritative license
-  version.
-- [x] Evaluate GPL-2.0-or-later CRT-Geom; defer a port until the physical matrix
-  can measure its intended configuration.
-- [x] Keep the established CRT modes until another CRT option has a clear license,
-  purpose, measured cost, persisted settings, and safe fallback. Details are in
-  `docs/ROADMAP_EVALUATIONS.md`.
-
-## Phase 6 — Fidelity and missing artwork decision (P2)
-
-- [ ] Compare representative scenes, long-run order, timing, day/night changes,
-  tides, and holiday behavior with documented observation references.
-- [x] Enforce clip zones, correct cloud placement and movement, stabilize walk
-  frame order and island positioning, and keep the palm tree fixed in place.
-- [x] Keep unavailable `FLAME.BMP` and `FLURRY.BMP` effects as documented
-  omissions for stable. Any future replacement must have documented authorship
-  and licensing and remain optional for original-data comparisons.
-
-## Phase 7 — Other platforms (deferred)
-
-- [x] Evaluate macOS, Linux/XScreenSaver, and WebAssembly and remove incomplete
-  platform shims and CI that implied support.
-- [ ] Reopen another platform only after the Windows stable release and only
-  with an owned runtime, integration, packaging, and QA plan.
-
-## Recommended immediate sequence
-
-1. Commit the native Windows 11 x64 migration.
-2. Push the branch and require the Windows 11 x64 CI workflow to pass.
-3. Merge and publish `v2026.1.0-rc.3` with its installer, EXE, and SCR.
-4. Test RC3 on a genuinely separate Windows 11 account or machine.
-5. Promote the verified candidate to stable, then update the portfolio.
+- ESP32 audio, SD-card resources, OTA, public-internet exposure, Bluetooth,
+  screenshots and advanced CRT effects remain out of scope.
+- macOS, Linux/XScreenSaver and WebAssembly ports remain deferred until
+  the stable Windows and ESP32 release gates are closed.
+- Missing original `FLAME.BMP` and `FLURRY.BMP` artwork remains documented; no
+  generated replacement will be represented as recovered Sierra data.

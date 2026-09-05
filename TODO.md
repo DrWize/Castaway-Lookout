@@ -1,6 +1,6 @@
 # Johnny Castaway 2026 — Release and fidelity worklist
 
-Updated: 2026-09-03
+Updated: 2026-09-04
 
 ## ESP32 first-scene milestone — complete with accepted exceptions
 
@@ -511,6 +511,153 @@ command profiles and the required end-of-run handoff.
    smoothness, switching, Day/Night, all holidays, suppression, stale pixels
    and drift remain pending.
 
+### ESP32 next leg: runtime review, bug log and story blocks — added 2026-09-04
+
+24. [ ] **Settings and authenticated API contract**
+    - Added: 2026-09-04
+    - Status: implemented; authenticated live mutation/persistence pending
+    - Changes: Add persisted `normal | review` playback mode and the fourth Sky
+      value `cycle`; migrate existing Sky/Holiday settings without loss. Extend
+      status and settings JSON and add authenticated bug-log routes.
+    - Validation: 2026-09-04 host source/API contract tests pass in the 31-test
+      Python suite; both ESP-IDF profiles and strict QEMU pass. On the flashed
+      board, unauthenticated status and bug requests both return HTTP 401;
+      the configured administrator password authenticates through the real
+      Chrome webpage and loads the protected status, settings, scene catalog
+      and bug-log views.
+    - Remaining gate: authenticated live API mutation and reboot-persistence test
+    - Closed:
+25. [ ] **Runtime ordered Review mode**
+    - Added: 2026-09-04
+    - Status: implemented; authenticated live and physical validation pending
+    - Changes: Run scenes 1-63 in order, repeat the current event until Looks
+      OK, Bug, Previous or Next, and resume the preserved shuffle on exit.
+      Keep the completed `jc_review` ledger unchanged.
+    - Validation: 2026-09-04 host contract tests, normal/review builds and strict
+      QEMU pass; runtime self-checks cover Review parsing/navigation wiring.
+    - Remaining gate: authenticated live navigation and physical control review
+    - Closed:
+26. [ ] **Persistent webpage bug log**
+    - Added: 2026-09-04
+    - Status: implemented; authenticated live and physical web validation pending
+    - Changes: Keep one latest sanitized `jc_bug` record per scene; expose
+      capture, copy-one, Copy All, resolve and confirmed Clear All actions.
+      Allocate full-log capture/read/clear buffers from the heap so the web task
+      does not carry a catalog-sized array on its stack.
+    - Validation: 2026-09-04 host tests confirm separate `jc_bug` persistence,
+      authenticated routes, report metadata and secret exclusion; flashed-board
+      unauthenticated access returns HTTP 401 as required.
+    - Remaining gate: persistence, sanitization, copy fallback and physical web QA
+    - Closed:
+27. [ ] **Ten-scene Day/Night Cycle**
+    - Added: 2026-09-04
+    - Status: implemented; physical sequence validation pending
+    - Changes: Alternate ten completed scene transitions in Day and ten in
+      Night; do not count repeats or rewinds and restart at Day after reboot.
+    - Validation: 2026-09-04 firmware self-check covers Day at boot, Night after
+      ten transitions and Day again after twenty; strict QEMU and physical-board
+      boot self-checks pass.
+    - Remaining gate: direct-panel ten-transition sequence review
+    - Closed:
+28. [ ] **Block-stable island placement**
+    - Added: 2026-09-04
+    - Status: implemented; firmware and direct-panel validation pending
+    - Changes: Reuse a variable island anchor for each ten-scene block; limit a
+      new block anchor to 64 horizontal and 32 vertical pixels of movement while
+      retaining authored fixed-left behavior.
+    - Validation: 2026-09-04 firmware self-check covers the 64-pixel horizontal
+      and 32-pixel vertical block-boundary limits; QEMU and physical boot logs
+      show the same variable anchor reused across independent scene starts.
+    - Remaining gate: direct-panel continuity and composition acceptance
+    - Closed:
+29. [x] **Automated validation**
+    - Added: 2026-09-04
+    - Status: complete
+    - Changes: Cover migration, APIs, review navigation, bug records, cycle
+      boundaries, replay/rewind invariants and island placement; run catalog,
+      Python, uncached Go, normal/review builds and strict QEMU fixtures.
+    - Validation: 2026-09-04: 31 Python tests, including reconstruction and
+      Node syntax validation of the embedded page script, catalog generation
+      check, `git diff --check`, uncached Go tests, normal firmware (`0xfa770`, 67%
+      free), legacy REVIEW-only firmware (`0x5fdc0`, 88% free) and strict QEMU
+      all pass. Initial QEMU checks exposed and closed a stack-allocation fault
+      and cross-fixture island-anchor leak before the final passing run.
+    - Remaining gate: none
+    - Closed: 2026-09-04
+30. [x] **Physical firmware flash and serial gate**
+    - Added: 2026-09-04
+    - Status: complete
+    - Changes: Re-identify the ESP32-S3, flash normal firmware, hard-reset and
+      capture complete serial boot evidence.
+    - Validation: 2026-09-04 COM4 was positively identified as an ESP32-S3
+      revision 0.2 with 16 MB flash and 8 MB embedded PSRAM. The normal image
+      and `jcdata` hashes verified during flash, RTS performed the hard reset,
+      PSRAM memory test passed, all 63 scenes loaded/started, normal shuffled
+      playback began and the authenticated web service joined the LAN. Later
+      the same day, the user-authorized `0x9000`/`0x6000` NVS partition reset
+      and normal reflash both passed; serial confirmed a fresh `Johnny-59D8`
+      setup AP at `192.168.4.1` for new Wi-Fi/admin-password provisioning. The
+      final corrected `0xfa770` image was then reflashed without erasing the new
+      settings; serial confirmed LAN service at `192.168.1.230`.
+    - Remaining gate: none
+    - Closed: 2026-09-04
+31. [ ] **Direct-panel and webpage acceptance**
+    - Added: 2026-09-04
+    - Status: awaiting user acceptance on the flashed board
+    - Changes: Verify review controls, copied bug reports, reboot persistence,
+      Day/Night blocks, island continuity, composition and smooth playback.
+    - Validation: 2026-09-04 flash and serial gates pass; the live service is
+      reachable and rejects unauthenticated status/bug requests with HTTP 401.
+      The real Chrome login succeeds with the configured password and renders
+      current status, settings, all 63 scenes and Bug Log with no console
+      warnings or errors. The earlier `login is not a function` collision and
+      embedded-script newline syntax fault are repaired and regression-tested.
+      Before resuming acceptance work, COM4 was re-identified again as the same
+      ESP32-S3 revision 0.2, MAC ending `59:D8`, with 16 MB flash and 8 MB
+      embedded PSRAM; identification changed neither firmware nor NVS. A
+      subsequent monitor reset produced a complete clean boot, passed the PSRAM
+      test, resource hashes, deterministic runtime fixtures, exact rewind and
+      all 63 load/start checks, restored station credentials, rejoined the LAN
+      at `192.168.1.230` and restarted SNTP without panic or watchdog. Browser
+      session/settings and bug-record persistence still require authenticated
+      verification. After that reset, the root page still returned HTTP 200
+      with the administrator login and unauthenticated `/api/v1/status` still
+      returned HTTP 401. No controllable browser surface was available in this
+      run, so no credential or authenticated state was read or changed.
+    - Remaining gate: copied-report/action QA, authenticated settings/session
+      and bug-record persistence, and user physical display acceptance
+    - Closed:
+32. [ ] **Web-controlled physical reviewer sidebar**
+    - Added: 2026-09-04
+    - Status: RC4 implementation, automated, build, package, flash and serial
+      gates complete; authenticated physical acceptance remains
+    - Changes: Persist `sidebar_mode = off | clock | review`, default Off, and
+      expose it through the authenticated webpage/API independently of
+      Normal/Review playback. Off is black with no sidebar touch controls;
+      Clock combines SNTP time/date and Open-Meteo weather; Review shows the
+      existing reviewer panel. Wi-Fi setup credentials and dedicated
+      REVIEW-only diagnostics remain visible regardless of this setting. Clock
+      keeps Johnny at native 640x480 and renders city, time/date, colour weather
+      icon, condition, temperature/high-low, `DATA FROM METEO`, local update
+      time and stale state. The web/setup pages use the Windows Castaway Lookout
+      SVG favicon.
+    - Validation: All 41 Python tests, catalog generation, embedded JavaScript
+      syntax validation, uncached Go tests, `git diff --check` and the normal
+      RC4 build pass. The `0x126fc0` image has 62% app-partition free and SHA-256
+      `82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
+      The release flasher produced byte-identical canonical data, identified
+      COM4 as ESP32-S3 revision 0.2 N16R8, verified every write and hard-reset
+      without erasing NVS. Serial previously passed the icon, PSRAM/data/runtime
+      and all 63 catalog-start gates; live root and favicon returned HTTP 200.
+      The user accepted the default-Off black sidebar.
+    - Remaining gate: log in, search/select the intended city, choose Clock and
+      physically confirm icon clarity/colours, `DATA FROM METEO`, the displayed
+      local update time, time/date/weather layout and
+      native scene smoothness;
+      then verify Reviewer, Off, reboot persistence, stale handling and disabled
+      Off/Clock reviewer hitboxes. Do not rerun broad automated suites.
+    - Closed:
+
 ### ESP32 Windows-aligned SCR and island lifecycle — approved 2026-09-01
 
 Scope: replace the guided review's fixed `ISLETEMP.SCR` assumption with the
@@ -656,7 +803,27 @@ Phase 3 fidelity work.
   preserve the previous current-user screensaver for uninstall restoration.
 - [ ] User test: first install, app launch, sound playback, `/c`, `/s`, Windows
   preview, idle activation, later sound installation, and uninstall.
-- [ ] Publish the installer only after the user has tested and approved it.
+- [x] Published the Windows RC3 installer and standalone EXE/SCR on 2026-08-25.
+  Clean-account acceptance remains a separate gate before stable promotion.
+
+## ESP32 7-inch Touch release package
+
+- [x] Add a single end-user flashing page at
+  `docs/FLASH_ESP32_7_TOUCH.md`, covering supported hardware, original-data
+  preparation, automatic flashing, first boot, 2.4 GHz Wi-Fi setup and recovery.
+- [x] Add a double-click Windows flasher that downloads and SHA-256-verifies
+  official Espressif esptool 4.12.0, verifies the canonical resource pair,
+  creates private `jcdata.bin`, discovers COM ports and proceeds only after an
+  ESP32-S3 N16R8 identity check.
+- [x] Add reproducible RC4 ZIP packaging with bootloader, partition table,
+  application, firmware checksums, flasher and guide. Do not include
+  copyrighted `RESOURCE.MAP`, `RESOURCE.001` or generated `jcdata.bin`.
+- [x] Validate the packaged script against an invalid-port no-write path and
+  the physical COM4 board. The local data image matched the normal build
+  byte-for-byte; all flash regions verified and RTS hard-reset the board without
+  erasing NVS.
+- [ ] Directly accept the latest Clock/weather/Reviewer presentation and control
+  persistence on the panel before promoting RC4 to stable.
 
 ## Ordered work queue
 
@@ -672,13 +839,16 @@ unless it exposes a stability, data-safety, or fidelity regression.
    further night-palette or transition changes. If no reliable night reference
    is available, keep the limitation documented and proceed.
 
-2. [ ] **Open a pull request and require the Windows 11 x64 CI job to pass.**
-   Review the final PR diff and artifact contents before merging into `main`.
-   Do not include generated executables or original game data.
+2. [ ] **Publish the RC4 source snapshot to `main`.**
+   Correction recorded 2026-09-05: RC3 is published, but live GitHub main was
+   still `343c7f5`; RC4 source and packaging were pending on the ESP32 branch.
+   Follow [the release tracker](docs/RELEASE_READINESS_PLAN.md) for integration,
+   the Castaway Lookout rename and RC4 prerelease publication. Generated
+   executables and original game data remain excluded from source control.
 
-3. [ ] **Create `v2026.1.0-rc.3` with the Windows installer.**
-   Include the paired native binaries, per-user installer, shared INI,
-   verified data setup, and Castaway Lookout icon.
+3. [x] **Create `v2026.1.0-rc.3` with the Windows installer.**
+   Published 2026-08-25 with the paired native binaries, per-user installer,
+   verified data setup and Castaway Lookout icon.
 
 4. [ ] **Test RC3 on a separate Windows account or machine.**
    Verify clean first launch with the default `scrantic` convention, explicit

@@ -1,6 +1,6 @@
 # Roadmap evaluations: CRT, fidelity, and cross-platform scope
 
-Updated: 2026-07-16
+Updated: 2026-09-04
 
 ## Phase 5 — optional CRT modes
 
@@ -67,7 +67,9 @@ compile proof established that the Go/Raylib code could be built on Ubuntu with
 a small platform boundary. It did not establish runtime display, audio,
 packaging, idle detection, or XScreenSaver support.
 
-Decision: keep JohnnyCx64 Windows-only. Remove the Linux platform shim and
-Ubuntu CI workflow so a compile-only artifact does not imply support or consume
-project build time. Reconsider cross-platform work only with a complete runtime,
-screensaver integration, packaging, and QA plan.
+Decision: keep the desktop/screensaver product Windows-only. The separately
+implemented native ESP-IDF port targets only the Waveshare
+ESP32-S3-Touch-LCD-7 and has its own release, flashing and physical QA gates.
+Remove the Linux platform shim and Ubuntu CI workflow so a compile-only artifact
+does not imply support. Reconsider another desktop platform only with complete
+runtime, screensaver integration, packaging and QA.

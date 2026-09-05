@@ -1,9 +1,11 @@
 #include "jcgfx.h"
+#include "weather_pixel_icons.h"
 
 #include <inttypes.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static uint16_t rgb565(uint8_t red, uint8_t green, uint8_t blue)
@@ -66,6 +68,7 @@ static const uint8_t *glyph_rows(char glyph)
     static const uint8_t plus[5] = {0x0, 0x2, 0x7, 0x2, 0x0};
     static const uint8_t period[5] = {0x0, 0x0, 0x0, 0x0, 0x2};
     static const uint8_t slash[5] = {0x1, 0x1, 0x2, 0x4, 0x4};
+    static const uint8_t colon[5] = {0x0, 0x2, 0x0, 0x2, 0x0};
     static const uint8_t space[5] = {0, 0, 0, 0, 0};
     if (glyph >= '0' && glyph <= '9') return digits[glyph - '0'];
     if (glyph >= 'A' && glyph <= 'Z') return letters[glyph - 'A'];
@@ -74,6 +77,7 @@ static const uint8_t *glyph_rows(char glyph)
     case '+': return plus;
     case '.': return period;
     case '/': return slash;
+    case ':': return colon;
     case ' ': return space;
     default: return NULL;
     }
@@ -505,6 +509,253 @@ void jcgfx_draw_setup_sidebar(uint16_t *destination, size_t width,
     draw_label(destination, width, height, 648, 155, password, 4, yellow);
     draw_label(destination, width, height, 648, 210, "OPEN", 2, white);
     draw_label(destination, width, height, 648, 235, "192.168.4.1", 2, yellow);
+}
+
+void jcgfx_clear_sidebar(uint16_t *destination, size_t width, size_t height)
+{
+    if (destination == NULL || width < 800 || height < 480) return;
+    fill_rect(destination, width, height, VALIDATION_SIDEBAR_X, 0, 160, 480,
+              rgb565(0, 0, 0));
+}
+
+typedef enum {
+    WEATHER_ICON_CLEAR,
+    WEATHER_ICON_PARTLY_CLOUDY,
+    WEATHER_ICON_CLOUDY,
+    WEATHER_ICON_RAIN,
+    WEATHER_ICON_SNOW,
+    WEATHER_ICON_STORM,
+} weather_icon_kind_t;
+
+static weather_icon_kind_t weather_icon_kind(uint8_t code)
+{
+    if (code == 0) return WEATHER_ICON_CLEAR;
+    if (code == 1 || code == 2) return WEATHER_ICON_PARTLY_CLOUDY;
+    if (code == 3 || code == 45 || code == 48) return WEATHER_ICON_CLOUDY;
+    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+        return WEATHER_ICON_RAIN;
+    }
+    if ((code >= 71 && code <= 77) || code == 85 || code == 86) {
+        return WEATHER_ICON_SNOW;
+    }
+    if (code >= 95 && code <= 99) return WEATHER_ICON_STORM;
+    return WEATHER_ICON_CLOUDY;
+}
+
+static void draw_weather_mask(uint16_t *destination, size_t width,
+                              size_t height, size_t x, size_t y,
+                              const uint32_t rows[32], uint16_t color)
+{
+    for (size_t source_y = 0; source_y < WEATHER_PIXEL_ICON_HEIGHT;
+         ++source_y) {
+        for (size_t source_x = 0; source_x < WEATHER_PIXEL_ICON_WIDTH;
+             ++source_x) {
+            if ((rows[source_y] & (UINT32_C(1) << source_x)) == 0) continue;
+            fill_rect(destination, width, height,
+                      x + source_x * WEATHER_PIXEL_ICON_SCALE,
+                      y + source_y * WEATHER_PIXEL_ICON_SCALE,
+                      WEATHER_PIXEL_ICON_SCALE, WEATHER_PIXEL_ICON_SCALE,
+                      color);
+        }
+    }
+}
+
+static void draw_weather_icon(uint16_t *destination, size_t width,
+                              size_t height, size_t x, size_t y, uint8_t code,
+                              bool night, bool muted)
+{
+    uint16_t blue = muted ? rgb565(125, 145, 160) : rgb565(86, 190, 255);
+    uint16_t yellow = muted ? rgb565(125, 145, 160) : rgb565(255, 213, 74);
+    uint16_t white = muted ? rgb565(125, 145, 160) : rgb565(235, 240, 248);
+    weather_icon_kind_t kind = weather_icon_kind(code);
+
+    if (kind == WEATHER_ICON_CLEAR) {
+        draw_weather_mask(destination, width, height, x, y,
+                          night ? WEATHER_MOON_ROWS : WEATHER_SUN_ROWS,
+                          night ? white : yellow);
+        return;
+    }
+    if (kind == WEATHER_ICON_CLOUDY) {
+        draw_weather_mask(destination, width, height, x, y,
+                          WEATHER_CLOUDS_ROWS, blue);
+        return;
+    }
+
+    draw_weather_mask(destination, width, height, x, y, WEATHER_CLOUD_ROWS,
+                      blue);
+    if (kind == WEATHER_ICON_PARTLY_CLOUDY || kind == WEATHER_ICON_RAIN ||
+        kind == WEATHER_ICON_SNOW) {
+        draw_weather_mask(destination, width, height, x, y,
+                          night ? WEATHER_MOON_ACCENT_ROWS
+                                : WEATHER_SUN_ACCENT_ROWS,
+                          night ? white : yellow);
+    }
+    if (kind == WEATHER_ICON_RAIN) {
+        draw_weather_mask(destination, width, height, x, y,
+                          WEATHER_RAIN_ACCENT_ROWS, white);
+    } else if (kind == WEATHER_ICON_SNOW) {
+        draw_weather_mask(destination, width, height, x, y,
+                          WEATHER_SNOW_ACCENT_ROWS, white);
+    } else if (kind == WEATHER_ICON_STORM) {
+        draw_weather_mask(destination, width, height, x, y,
+                          WEATHER_STORM_RAIN_ACCENT_ROWS, white);
+        draw_weather_mask(destination, width, height, x, y,
+                          WEATHER_LIGHTNING_ACCENT_ROWS, yellow);
+    }
+}
+
+esp_err_t jcgfx_verify_weather_icon_fixtures(void)
+{
+    typedef struct {
+        uint8_t code;
+        bool night;
+        bool muted;
+        uint32_t expected_hash;
+    } weather_fixture_t;
+    static const weather_fixture_t fixtures[] = {
+        {0, false, false, 0xf6bea6e5U},
+        {0, true, false, 0x2cd13fe5U},
+        {2, false, false, 0x2816d4a1U},
+        {3, false, false, 0xb6b541c5U},
+        {45, false, false, 0xb6b541c5U},
+        {61, false, false, 0xf0fb2d7dU},
+        {61, true, false, 0x1bcc03d9U},
+        {71, false, false, 0x60b3c33dU},
+        {95, false, false, 0x5e1156a1U},
+        {61, false, true, 0x8cb1e245U},
+        {255, false, true, 0x31cf3045U},
+        {255, false, false, 0xb6b541c5U},
+    };
+    const size_t pixel_count = 64U * 64U;
+    uint16_t *pixels = calloc(pixel_count, sizeof(*pixels));
+    if (pixels == NULL) return ESP_ERR_NO_MEM;
+    esp_err_t result = ESP_OK;
+    for (size_t fixture = 0; fixture < sizeof(fixtures) / sizeof(fixtures[0]);
+         ++fixture) {
+        memset(pixels, 0, pixel_count * sizeof(*pixels));
+        draw_weather_icon(pixels, 64, 64, 0, 0, fixtures[fixture].code,
+                          fixtures[fixture].night, fixtures[fixture].muted);
+        uint32_t hash = UINT32_C(2166136261);
+        for (size_t pixel = 0; pixel < pixel_count; ++pixel) {
+            hash ^= pixels[pixel];
+            hash *= UINT32_C(16777619);
+        }
+        if (hash != fixtures[fixture].expected_hash) {
+            result = ESP_ERR_INVALID_CRC;
+            break;
+        }
+    }
+    free(pixels);
+    return result;
+}
+
+static const char *weather_label(uint8_t code)
+{
+    if (code == 0) return "SUNNY";
+    if (code <= 3) return "CLOUDY";
+    if (code == 45 || code == 48) return "FOG";
+    if ((code >= 51 && code <= 67) || (code >= 80 && code <= 82)) {
+        return "RAIN";
+    }
+    if ((code >= 71 && code <= 77) || code == 85 || code == 86) {
+        return "SNOW";
+    }
+    if (code >= 95 && code <= 99) return "STORM";
+    return "WEATHER";
+}
+
+static void uppercase_ascii(const char *input, char *output, size_t capacity)
+{
+    size_t used = 0;
+    for (const unsigned char *at = (const unsigned char *)input;
+         at != NULL && *at && used + 1 < capacity; ++at) {
+        if (*at >= 'a' && *at <= 'z') {
+            output[used++] = (char)(*at - ('a' - 'A'));
+        } else if ((*at >= 'A' && *at <= 'Z') || (*at >= '0' && *at <= '9') ||
+                   *at == ' ' || *at == '-' || *at == '.') {
+            output[used++] = (char)*at;
+        }
+    }
+    output[used] = '\0';
+}
+
+void jcgfx_draw_clock_weather_sidebar(
+    uint16_t *destination, size_t width, size_t height,
+    const jcgfx_clock_weather_status_t *status)
+{
+    if (destination == NULL || width < 800 || height < 480 || status == NULL ||
+        status->location == NULL) return;
+    static const char *const weekdays[] = {
+        "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT",
+    };
+    static const char *const months[] = {
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+    };
+    uint16_t white = rgb565(235, 240, 248);
+    uint16_t blue = rgb565(86, 190, 255);
+    uint16_t yellow = rgb565(255, 213, 74);
+    uint16_t muted = rgb565(125, 145, 160);
+    jcgfx_clear_sidebar(destination, width, height);
+    char line[32] = {0};
+    if (status->time_valid && status->weekday < 7 && status->month >= 1 &&
+        status->month <= 12) {
+        snprintf(line, sizeof(line), "%02u:%02u", status->hour,
+                 status->minute);
+        draw_label(destination, width, height, 650, 18, line, 7, yellow);
+        snprintf(line, sizeof(line), "%s %02u %s",
+                 weekdays[status->weekday], status->day,
+                 months[status->month - 1]);
+        draw_label(destination, width, height, 650, 66, line, 2, white);
+    } else {
+        draw_label(destination, width, height, 650, 18, "--:--", 7, muted);
+        draw_label(destination, width, height, 650, 66, "SYNCING TIME", 2,
+                   muted);
+    }
+    char location[40] = {0};
+    uppercase_ascii(status->location, location, sizeof(location));
+    draw_wrapped_title(destination, width, height, 648, 96, location, blue);
+    fill_rect(destination, width, height, 648, 132, 144, 2, muted);
+    if (!status->weather_available) {
+        draw_weather_icon(destination, width, height, 688, 142, 255, false,
+                          true);
+        draw_label(destination, width, height, 666, 216, "WEATHER", 3, white);
+        draw_label(destination, width, height, 674, 244, "WAITING", 3, muted);
+        return;
+    }
+    bool night = status->time_valid && (status->hour < 6 || status->hour >= 18);
+    draw_weather_icon(destination, width, height, 688, 142,
+                      status->weather_code, night, status->weather_stale);
+    const char *condition = weather_label(status->weather_code);
+    size_t condition_scale = strlen(condition) > 6 ? 2 : 3;
+    size_t condition_width = strlen(condition) * 4 * condition_scale;
+    draw_label(destination, width, height,
+               640 + (160 - condition_width) / 2, 212, condition,
+               condition_scale, status->weather_stale ? muted : blue);
+    int temperature = status->temperature_tenths;
+    snprintf(line, sizeof(line), "%s%d.%d C", temperature < 0 ? "-" : "",
+             abs(temperature) / 10, abs(temperature) % 10);
+    draw_label(destination, width, height, 650, 240, line, 4, yellow);
+    int high = status->high_tenths;
+    int low = status->low_tenths;
+    snprintf(line, sizeof(line), "HIGH %s%d.%d C", high < 0 ? "-" : "",
+             abs(high) / 10, abs(high) % 10);
+    draw_label(destination, width, height, 650, 286, line, 2, white);
+    snprintf(line, sizeof(line), "LOW  %s%d.%d C", low < 0 ? "-" : "",
+             abs(low) / 10, abs(low) % 10);
+    draw_label(destination, width, height, 650, 308, line, 2, white);
+    draw_label(destination, width, height, 650, 362,
+               status->weather_stale ? "STALE DATA" : "CURRENT",
+               2, status->weather_stale ? yellow : muted);
+    if (status->weather_updated_valid) {
+        snprintf(line, sizeof(line), "UPDATED %02u:%02u",
+                 status->weather_updated_hour, status->weather_updated_minute);
+    } else {
+        snprintf(line, sizeof(line), "UPDATED --:--");
+    }
+    draw_label(destination, width, height, 650, 402, "DATA FROM METEO", 2,
+               muted);
+    draw_label(destination, width, height, 650, 430, line, 2, muted);
 }
 
 static const char *review_label(jcgfx_validation_review_t review)

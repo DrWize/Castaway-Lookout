@@ -254,3 +254,13 @@ The ledger is confirmed. The separate `build-review-only` configuration reads
 the persisted REVIEW mask. Its
 Scene controls must wrap only within that shortlist; changing a scene to OK
 removes it, and an empty list stops on `ALL RESOLVED`.
+
+## Web-controlled reviewer sidebar — 2026-09-04
+
+- Default-Off physical gate: accepted by the user. The normal firmware shows a
+  completely black reserved 160x480 sidebar.
+- Still pending: turn the Reviewer sidebar On through the authenticated webpage,
+  confirm the complete controls appear without changing the native 640x480
+  scene, turn it Off again, and confirm the saved state after reboot. RC4's
+  packaged flasher, board-identification, verified-write and hard-reset gates
+  pass, but they do not replace this direct panel check.

@@ -14,6 +14,7 @@ resource_windows_*.syso
 /build/scrantic/
 /build/installer/
 /build/installer-smoke/
+/build/release/
 /scrantic/*
 !/scrantic/Johnny-Castaway-Original-Data.sfv
 /assets/RESOURCE.MAP

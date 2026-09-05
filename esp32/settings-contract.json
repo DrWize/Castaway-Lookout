@@ -1,14 +1,20 @@
 {
-  "version": 1,
+  "version": 2,
   "layout": {
     "values": ["left", "center", "right"],
     "default": "right"
   },
-  "clock": { "type": "boolean", "default": true },
-  "weather": { "type": "boolean", "default": true },
+  "sidebar_mode": {
+    "values": ["off", "clock", "review"],
+    "default": "off"
+  },
+  "weather_location": {
+    "fields": ["name", "latitude", "longitude", "timezone"],
+    "default": null
+  },
   "crt": {
     "values": ["off", "soft"],
     "default": "soft"
   },
-  "center_hides_sidebar_without_clearing_toggles": true
+  "scene_canvas": "native 640x480 at x=0 with a 160x480 right sidebar"
 }

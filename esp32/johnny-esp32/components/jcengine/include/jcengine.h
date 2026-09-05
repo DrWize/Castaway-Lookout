@@ -123,6 +123,7 @@ typedef enum {
     JCENGINE_SKY_AUTOMATIC = 0,
     JCENGINE_SKY_DAY = 1,
     JCENGINE_SKY_NIGHT = 2,
+    JCENGINE_SKY_CYCLE = 3,
 } jcengine_sky_mode_t;
 
 typedef struct {

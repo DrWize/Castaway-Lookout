@@ -40,6 +40,26 @@ typedef struct {
     jcgfx_validation_review_t review;
 } jcgfx_validation_sidebar_status_t;
 
+typedef struct {
+    bool time_valid;
+    bool weather_available;
+    bool weather_stale;
+    bool weather_updated_valid;
+    uint16_t year;
+    uint8_t month;
+    uint8_t day;
+    uint8_t weekday;
+    uint8_t hour;
+    uint8_t minute;
+    uint8_t weather_updated_hour;
+    uint8_t weather_updated_minute;
+    int16_t temperature_tenths;
+    int16_t high_tenths;
+    int16_t low_tenths;
+    uint8_t weather_code;
+    const char *location;
+} jcgfx_clock_weather_status_t;
+
 esp_err_t jcgfx_render_screen(uint16_t *destination, size_t destination_width,
                               size_t destination_height, jcgfx_layout_t layout,
                               const jcrez_palette_t *palette,
@@ -76,6 +96,11 @@ void jcgfx_draw_cursor(uint16_t *destination, size_t width, size_t height,
 void jcgfx_draw_setup_sidebar(uint16_t *destination, size_t width,
                               size_t height, const char *ssid,
                               const char *password);
+void jcgfx_clear_sidebar(uint16_t *destination, size_t width, size_t height);
+void jcgfx_draw_clock_weather_sidebar(
+    uint16_t *destination, size_t width, size_t height,
+    const jcgfx_clock_weather_status_t *status);
+esp_err_t jcgfx_verify_weather_icon_fixtures(void);
 void jcgfx_draw_validation_sidebar(uint16_t *destination, size_t width,
                                    size_t height,
                                    const jcgfx_validation_sidebar_status_t *status);

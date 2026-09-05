@@ -1,8 +1,9 @@
 # Display performance matrix
 
-This document records physical-output measurements for JohnnyCx64 display and
+This document records physical-output measurements for Castaway Lookout display and
 display-filter modes. Results are hardware-specific and are not substitutes for testing on
-lower-powered GPUs.
+lower-powered GPUs. It covers the Windows renderer only; ESP32 panel performance
+and acceptance are tracked in `../esp32/ALL_SCENES_FIDELITY.md`.
 
 ## 2026-07-16 baseline
 

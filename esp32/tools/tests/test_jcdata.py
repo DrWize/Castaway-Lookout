@@ -87,8 +87,10 @@ class JcdataTests(unittest.TestCase):
         self.assertEqual(contract["layout"], {
             "values": ["left", "center", "right"], "default": "right"
         })
-        self.assertEqual(contract["clock"], {"type": "boolean", "default": True})
-        self.assertEqual(contract["weather"], {"type": "boolean", "default": True})
+        self.assertEqual(contract["sidebar_mode"], {
+            "values": ["off", "clock", "review"], "default": "off"
+        })
+        self.assertEqual(contract["weather_location"]["default"], None)
         self.assertEqual(contract["crt"], {
             "values": ["off", "soft"], "default": "soft"
         })
