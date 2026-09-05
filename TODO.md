@@ -839,11 +839,12 @@ unless it exposes a stability, data-safety, or fidelity regression.
    further night-palette or transition changes. If no reliable night reference
    is available, keep the limitation documented and proceed.
 
-2. [ ] **Publish the RC4 source snapshot to `main`.**
+2. [x] **Publish the RC4 source snapshot to `main`.**
    Correction recorded 2026-09-05: RC3 is published, but live GitHub main was
    still `343c7f5`; RC4 source and packaging were pending on the ESP32 branch.
-   Follow [the release tracker](docs/RELEASE_READINESS_PLAN.md) for integration,
-   the Castaway Lookout rename and RC4 prerelease publication. Generated
+   Closed 2026-09-05: `039813d` is verified on main and the repository is now
+   `DrWize/Castaway-Lookout`. Follow [the release tracker](docs/RELEASE_READINESS_PLAN.md)
+   for RC4 prerelease publication and download verification. Generated
    executables and original game data remain excluded from source control.
 
 3. [x] **Create `v2026.1.0-rc.3` with the Windows installer.**

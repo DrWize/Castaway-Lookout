@@ -29,8 +29,8 @@ part of this pass.
 | D1 | Installation-only README and platform guides | In progress | Baseline | Separate Windows RC3 and ESP32 RC4 paths; finish static review | — |
 | D2 | Preserve developer references and correct status claims | Pending | D1 | Retain attribution, technical evidence and open physical gates | — |
 | P1 | Refresh and inspect ESP32 package | Pending | D1, D2 | Reuse existing firmware; include working packaged documentation and checksums; exclude private data | — |
-| S1 | Commit intended source and integrate into main | Pending | P1 | Explicit staging; preserve unrelated files; no history rewrite | — |
-| R1 | Rename repository to Castaway-Lookout | Pending | S1 | Recheck availability, rename, update origin and maintained docs links | — |
+| S1 | Commit intended source and integrate into main | Complete | Static package preparation | `039813d51698cd275ab39034a391b11a76ff5e59` pushed and matched live main; unrelated GIF retained | 2026-09-05 |
+| R1 | Rename repository to Castaway-Lookout | Complete | S1 | GitHub reports `DrWize/Castaway-Lookout`, default main; origin updated; Windows RC3 assets retained | 2026-09-05 |
 | R2 | Publish ESP32 RC4 prerelease | Pending | R1 | ZIP, checksum, source revision, release notes; keep Windows RC3 download | — |
 | V1 | Verify GitHub state and downloads | Pending | R2 | Confirm main, repository name, release assets and downloaded hashes | — |
 | H1 | Physical sidebar/control acceptance | Open, outside this pass | Existing RC4 firmware | Clock layout/colour, city selection, smoothness, Reviewer/Off, persistence, weather staleness | — |
@@ -79,3 +79,8 @@ the renamed repository serves the RC4 ZIP and checksum.
   references confirm UART1 routing; the Windows CH343 driver URL returns 200.
 - Packaging script syntax was inspected with PowerShell's parser. This is
   static inspection, not a package-flasher execution or firmware test.
+
+Packaging provenance requires a committed source revision, so the final ZIP is
+assembled after S1; its static preparation preceded the source integration.
+The release guide is prepared for the RC4 asset; the landing page remains
+explicitly pending until publication is verified.

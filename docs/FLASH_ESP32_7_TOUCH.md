@@ -27,10 +27,11 @@ You need:
   is accepted; the helper checks both automatically.
 - A **2.4 GHz Wi-Fi network** for the local browser controls.
 
-The **2026.1.0 RC4** ZIP is awaiting publication. Its filename is
+Download the [**ESP32 RC4 flashing ZIP**](https://github.com/DrWize/Castaway-Lookout/releases/download/v2026.1.0-rc.4/JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0-rc.4.zip):
 `JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0-rc.4.zip`.
-Use the [project release list](https://github.com/DrWize/Castaway-Lookout/releases)
-when it is available; GitHub's **Source code** archives are not the flasher.
+The [RC4 release page](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4)
+also provides its SHA-256 checksum. GitHub's **Source code** archives are not the
+flashing package.
 
 1. Extract the **complete ZIP** to a folder you can write to, such as Documents.
    Do not run it inside File Explorer's ZIP preview.
