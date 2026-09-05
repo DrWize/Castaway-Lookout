@@ -105,7 +105,7 @@ Success: a new user can select the correct download and finish setup without
 developer documentation. GitHub main contains the intended source and docs;
 the renamed repository serves the RC4 ZIP and checksum.
 
-## Static inspection evidence â€” 2026-09-05
+## Static inspection evidence 2026-09-05
 
 - Firmware descriptor: project `johnny_esp32`, version `2026.1.0-rc.4`, built
   `Sep 4 2026 22:32:42`; binary length 1,208,256 bytes. It matches the baseline
@@ -123,7 +123,7 @@ assembled after S1; its static preparation preceded the source integration.
 The RC4 guide ships byte-for-byte in the published ZIP. The landing page now
 links directly to the verified public assets.
 
-## Published result â€” 2026-09-05
+## Published result 2026-09-05
 
 - Repository: [DrWize/Castaway-Lookout](https://github.com/DrWize/Castaway-Lookout),
   default branch `main`. Local checkout remains in its existing JohnnyCx64
