@@ -874,7 +874,10 @@ unless it exposes a stability, data-safety, or fidelity regression.
    Published 2026-08-25 with the paired native binaries, per-user installer,
    verified data setup and Castaway Lookout icon.
 
-4. [ ] **Test RC3 on a separate Windows account or machine.**
+4. [ ] **Complete the full separate-account Windows screensaver checklist.**
+   Update 2026-09-05: user checked the RC installer and confirmed it is OK;
+   Windows stable published with that installer acceptance. The full checklist
+   below remains follow-up evidence, not a claim that every scenario was tested.
    Verify clean first launch with the default `scrantic` convention, explicit
    `--data-dir`, saved Data Files selection, native x64 startup, `/c`, `/s`, and
    Windows Screen Saver Settings preview/install behavior. Also verify missing
@@ -884,8 +887,10 @@ unless it exposes a stability, data-safety, or fidelity regression.
    Closed 2026-09-05: tag/source `4f3db04`, stable build and source CI passed;
    identified N16R8 app flash/reboot and fresh-weather serial verified. Latest
    stable ZIP/checksum publicly downloaded and byte-verified; exact hashes are
-   in the release tracker. Windows stable promotion remains separate and
-   depends on the clean-account/machine acceptance in item 4.
+   in the release tracker. Windows stable was also published 2026-09-05 after
+   user RC installer acceptance: source `f6d2921`, native builds/tests/vet and
+   CI passed; public installer/EXE/SCR/checksums/manifest byte-verified. Full
+   screensaver follow-up evidence remains in item 4.
 
 6. [ ] **Run the physical CRT performance matrix.**
    Use `F9` at 1920x1080, 3840x2160, 5120x1440, and 7680x2160, including at

@@ -213,4 +213,24 @@ EXE/SCR builds, amd64 checks, go vet and Inno Setup build passed. Application
 and screensaver product version is 2026.1.0; numeric file/installer version
 2026.1.0.4 keeps upgrade ordering above RC3's 2026.1.0.3. Runtime changes since
 Windows RC3 are limited to the app version string; installer source changes
-are version metadata and renamed repository links. Publication is in progress.
+are version metadata and renamed repository links. Publication completed
+2026-09-05.
+
+Windows stable publication closed 2026-09-05:
+
+- Source: `f6d2921`, tagged `v2026.1.0-windows`, is on main. Latest release
+  `v2026.1.0` now serves both Windows and ESP32. Existing ESP32 tag/assets stayed
+  unchanged; release notes and the Windows manifest identify separate source.
+- GitHub CI passed on `158c350` (same Windows source plus documentation).
+- Installer: 3,860,670 bytes, SHA-256
+  `7d5faa0803023cf7e027268ef4fbd311e4f67a08a34e918a5f3284d1c8806d51`.
+- EXE: 4,721,664 bytes, SHA-256
+  `c2fdc2faff7b6d69583cb7c9c61ab63bd6904cba55f994a03fc30549e7b67507`.
+- SCR: 4,721,664 bytes, SHA-256
+  `e19bdd75d1993cbc775db1013003ca232e50e780e3fb76bcd11cbf8dda8d0562`.
+- All three binaries, Windows checksums and source manifest were downloaded
+  anonymously and byte-match local files. Root README and Windows setup links
+  now use stable assets. No original game resources or credentials published.
+- User RC installer acceptance applies to unchanged installation behavior.
+  Full separate-account/screensaver scenarios were not independently rerun;
+  these remain optional follow-up evidence, not falsely marked as passed.
