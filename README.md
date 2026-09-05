@@ -12,6 +12,20 @@ a dedicated Waveshare ESP32 display.
 
 The existing installer and application still use the name **Johnny Castaway**.
 
+[All releases](https://github.com/DrWize/Castaway-Lookout/releases) ·
+[2026.1.0 release notes](docs/releases/2026.1.0.md) ·
+[Documentation](docs/README.md)
+
+## Features at a glance
+
+| Feature | Windows | ESP32 display |
+| --- | --- | --- |
+| Johnny Castaway playback | Desktop application or screensaver | Standalone display with a 63-scene catalog |
+| Controls | F1 settings and keyboard shortcuts | Authenticated LAN webpage and optional Reviewer sidebar |
+| Sound | Optional original sounds | Not supported |
+| Clock and weather | Not included | Optional sidebar with local time and Open-Meteo weather |
+| Settings | Shared INI for application and screensaver | Saved on the device and retained across reboot |
+
 ## Install on Windows
 
 1. Download and run the **Windows 2026.1.0 installer** above.
