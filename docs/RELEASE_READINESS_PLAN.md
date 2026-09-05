@@ -26,13 +26,13 @@ part of this pass.
 
 | ID | Task | Status | Depends on | Evidence / remaining work | Completed |
 | --- | --- | --- | --- | --- | --- |
-| D1 | Installation-only README and platform guides | In progress | Baseline | Separate Windows RC3 and ESP32 RC4 paths; finish static review | — |
-| D2 | Preserve developer references and correct status claims | Pending | D1 | Retain attribution, technical evidence and open physical gates | — |
-| P1 | Refresh and inspect ESP32 package | Pending | D1, D2 | Reuse existing firmware; include working packaged documentation and checksums; exclude private data | — |
+| D1 | Installation-only README and platform guides | Complete | Baseline | 57-line README, separate guides, correct downloads and local links/anchors | 2026-09-05 |
+| D2 | Preserve developer references and correct status claims | Complete | D1 | Technical reference and docs index added; premature main claim corrected; physical gate retained | 2026-09-05 |
+| P1 | Refresh and inspect ESP32 package | Complete | D1, D2, S1 | Exact 11-file archive inventory; firmware bytes/checksums unchanged; guide/source/license included; no private data | 2026-09-05 |
 | S1 | Commit intended source and integrate into main | Complete | Static package preparation | `039813d51698cd275ab39034a391b11a76ff5e59` pushed and matched live main; unrelated GIF retained | 2026-09-05 |
 | R1 | Rename repository to Castaway-Lookout | Complete | S1 | GitHub reports `DrWize/Castaway-Lookout`, default main; origin updated; Windows RC3 assets retained | 2026-09-05 |
-| R2 | Publish ESP32 RC4 prerelease | Pending | R1 | ZIP, checksum, source revision, release notes; keep Windows RC3 download | — |
-| V1 | Verify GitHub state and downloads | Pending | R2 | Confirm main, repository name, release assets and downloaded hashes | — |
+| R2 | Publish ESP32 RC4 prerelease | Complete | R1, P1 | Public RC4 has ZIP and checksum; tag points to `92be4bd`; prerelease=true | 2026-09-05 |
+| V1 | Verify GitHub state and downloads | Complete | R2 | Renamed repo/default main verified; anonymous RC4 downloads byte-match local files; Windows RC3 installer hash unchanged | 2026-09-05 |
 | H1 | Physical sidebar/control acceptance | Open, outside this pass | Existing RC4 firmware | Clock layout/colour, city selection, smoothness, Reviewer/Off, persistence, weather staleness | — |
 
 ## Documentation and packaging decisions
@@ -82,5 +82,27 @@ the renamed repository serves the RC4 ZIP and checksum.
 
 Packaging provenance requires a committed source revision, so the final ZIP is
 assembled after S1; its static preparation preceded the source integration.
-The release guide is prepared for the RC4 asset; the landing page remains
-explicitly pending until publication is verified.
+The RC4 guide ships byte-for-byte in the published ZIP. The landing page now
+links directly to the verified public assets.
+
+## Published result — 2026-09-05
+
+- Repository: [DrWize/Castaway-Lookout](https://github.com/DrWize/Castaway-Lookout),
+  default branch `main`. Local checkout remains in its existing JohnnyCx64
+  directory; origin uses the renamed URL. The GitHub description now identifies
+  both Windows and ESP32. Runtime branding and installer identity are unchanged.
+- [ESP32 RC4 prerelease](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4)
+  is public. Its tag and packaged SOURCE.md identify
+  `92be4bde6b63f7b08969d493242d747812ec2be4`; this source is on main.
+  Subsequent publication-status documentation does not alter firmware source.
+- ZIP: `JohnnyCastaway-ESP32-S3-Touch-LCD-7-2026.1.0-rc.4.zip`, 852,260 bytes.
+  SHA-256: `101d1f5e41cb0896a1d6539edf61acd281bfcd33611e4fd0595d96e6930c126b`.
+  Both ZIP and `.zip.sha256` were downloaded anonymously and matched local bytes.
+- Archive inventory: flasher BAT/PS1, FLASHING.md, SOURCE.md, LICENSE, NOTICE.md,
+  data-folder placeholder, three firmware binaries and firmware/SHA256SUMS.txt.
+  No original resource archives, `jcdata.bin`, credentials or build caches ship.
+- Windows RC3 installer was downloaded through the renamed repository URL and
+  retains SHA-256
+  `7cf840099fbb87e3c8b77b4de13fe8ff9be23944feb19e1d2f940879756f4d4d`.
+- No tests, firmware builds or flashing were performed. Existing GitHub CI was
+  left unchanged. H1 remains open; publication is not physical acceptance.

@@ -808,6 +808,12 @@ Phase 3 fidelity work.
 
 ## ESP32 7-inch Touch release package
 
+Published 2026-09-05 as the [Castaway Lookout ESP32 RC4 prerelease](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4).
+The public ZIP and checksum were downloaded and verified. See the
+[release tracker](docs/RELEASE_READINESS_PLAN.md) for source revision and hashes.
+The earlier validation below is historical; no tests/builds/flashing were rerun
+for publication, and the direct-panel gate remains open.
+
 - [x] Add a single end-user flashing page at
   `docs/FLASH_ESP32_7_TOUCH.md`, covering supported hardware, original-data
   preparation, automatic flashing, first boot, 2.4 GHz Wi-Fi setup and recovery.

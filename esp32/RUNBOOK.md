@@ -25,7 +25,7 @@ The normal RC4 firmware is built at `0x126fc0` bytes with 62% of its
 application partition free. Its SHA-256 is
 `82cc2dcb528532d5f5eeec866d1676c588f181afa102e6e57ce30caa88c28267`.
 It is versioned `2026.1.0-rc.4` and is packaged by
-`../build/build-esp32-release.ps1` with the one-page
+`../build/build-esp32-release.ps1` with the installation
 `../docs/FLASH_ESP32_7_TOUCH.md` guide and a double-click Windows flasher.
 The ZIP excludes `jcdata.bin`; the flasher verifies the user's canonical game
 files and creates that private image locally.

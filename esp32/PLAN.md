@@ -260,7 +260,7 @@ semantics.
    a ten-Day/ten-Night block sequence with stable island anchors.
 4. **Implemented — Clock/weather sidebar and release flasher.** The 160-pixel
    sidebar provides SNTP time/date, city weather, colour pixel icons, stale state
-   and local update time. RC4 includes a one-page guide and double-click Windows
+   and local update time. RC4 includes a installation guide and double-click Windows
    flasher that generates private `jcdata.bin` locally and positively identifies
    the supported N16R8 board before writing.
 5. **Close the current physical acceptance gate.** Directly confirm sidebar

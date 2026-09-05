@@ -15,7 +15,7 @@ rerun during the documentation/publication pass.
   ESP32-S3-Touch-LCD-7, with Wi-Fi setup, authenticated LAN control,
   Normal/Review playback, persistent settings and Clock/weather/Reviewer
   sidebar modes.
-- [x] RC4 has a reproducible ESP32 release ZIP and one-page flashing guide. The
+- [x] RC4 has a reproducible ESP32 release ZIP and installation guide. The
   ZIP omits copyrighted Sierra data and creates `jcdata.bin` locally from the
   user's hash-verified originals.
 

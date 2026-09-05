@@ -1,7 +1,9 @@
 # Castaway Lookout — ESP32 developer reference
 
 For installation, use the [ESP32 setup guide](../docs/FLASH_ESP32_7_TOUCH.md).
-For publication status, see the [release tracker](../docs/RELEASE_READINESS_PLAN.md).
+[ESP32 RC4 is published](https://github.com/DrWize/Castaway-Lookout/releases/tag/v2026.1.0-rc.4)
+as a prerelease. For publication evidence, see the
+[release tracker](../docs/RELEASE_READINESS_PLAN.md).
 
 This directory contains the native ESP-IDF port for the Waveshare
 ESP32-S3-Touch-LCD-7 (ESP32-S3, 16 MB flash, 8 MB PSRAM). It renders the
@@ -107,7 +109,7 @@ with 62% of its application partition free and SHA-256
 Historical validation on 2026-09-04 recorded all 41 Python tests, catalog
 generation, uncached Go tests and the normal ESP-IDF build passing. These checks
 are not being rerun for the 2026-09-05 documentation/publication pass. The end-user release ZIP is built by
-`../build/build-esp32-release.ps1`; it includes the one-page guide, verified
+`../build/build-esp32-release.ps1`; it includes the installation guide, verified
 firmware binaries and a double-click Windows flasher, but no copyrighted game
 data. Its flasher generated a byte-identical private `jcdata.bin`, positively
 identified the COM4 N16R8 board, verified every write and hard-reset it without
