@@ -40,12 +40,12 @@ prompt. See [Windows setup and troubleshooting](docs/SETUP_GUIDE.md).
 ## Install on an ESP32 display
 
 You need the exact **Waveshare ESP32-S3-Touch-LCD-7, 800×480, 16 MB flash /
-8 MB PSRAM** board, a Windows 10/11 **x64** computer with internet access, a USB
-data cable, and your original `RESOURCE.MAP` and `RESOURCE.001` files.
+8 MB PSRAM** board and a Windows 10/11 **x64** computer with internet access, a USB
+data cable, and your original `RESOURCE.MAP` and `RESOURCE.001` files that you have dowloaded from the internet, search for "johhny castaway screensaver", there's no need to run it, just find the files mentioned.
 
-Download the **ESP32 2026.1.0 ZIP** above, then:
+Download the **ESP32 package** above, then:
 
-1. Extract the complete ESP32 2026.1.0 ZIP and copy your two resource files into `data`.
+1. Extract the complete ESP32  ZIP and copy your two resource files into `data`.
 2. Connect the board's **UART1 USB-to-UART** port, with the UART switch at UART1.
 3. Double-click **FLASH_ESP32.bat**, check the detected hardware and confirm.
 4. Wait for completion and about **90 seconds** of startup checks, then follow
@@ -54,8 +54,7 @@ Download the **ESP32 2026.1.0 ZIP** above, then:
 No Git, Python installation or ESP-IDF is needed. The package supports only the
 specified board; it does not support 7B or 8 MB flash variants. Read the
 [complete ESP32 setup and recovery guide](docs/FLASH_ESP32_7_TOUCH.md) before
-flashing. Clock/weather, sidebar controls, persistence and smooth playback have been
-physically accepted.
+flashing.
 
 ## Help
 
